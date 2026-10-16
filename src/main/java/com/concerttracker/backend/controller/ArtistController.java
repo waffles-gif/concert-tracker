@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -38,8 +39,9 @@ public class ArtistController {
 
     @GetMapping
     public ResponseEntity<PageResponse<ArtistResponse>> findAll(
+            @RequestParam(required = false) Long genreId,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-        return ResponseEntity.ok(artistService.findAll(pageable));
+        return ResponseEntity.ok(artistService.findAll(genreId, pageable));
     }
 
     @GetMapping("/{id}")

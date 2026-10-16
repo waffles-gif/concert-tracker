@@ -10,7 +10,7 @@ public interface ArtistService {
 
     ArtistResponse create(ArtistCreateRequest request);
 
-    PageResponse<ArtistResponse> findAll(Pageable pageable);
+    PageResponse<ArtistResponse> findAll(Long genreId, Pageable pageable);
 
     ArtistResponse findById(Long id);
 

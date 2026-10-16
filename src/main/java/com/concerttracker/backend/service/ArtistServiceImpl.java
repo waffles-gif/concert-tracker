@@ -13,6 +13,7 @@ import com.concerttracker.backend.exception.ResourceNotFoundException;
 import com.concerttracker.backend.repository.ArtistRepository;
 import com.concerttracker.backend.repository.ConcertRepository;
 import com.concerttracker.backend.repository.GenreRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +51,11 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<ArtistResponse> findAll(Pageable pageable) {
-        return PageResponse.from(artistRepository.findAll(pageable).map(this::toResponse));
+    public PageResponse<ArtistResponse> findAll(Long genreId, Pageable pageable) {
+        Page<Artist> artists = genreId == null
+                ? artistRepository.findAll(pageable)
+                : artistRepository.findByGenres_Id(genreId, pageable);
+        return PageResponse.from(artists.map(this::toResponse));
     }
 
     @Override
