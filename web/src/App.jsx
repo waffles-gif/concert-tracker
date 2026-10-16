@@ -1,8 +1,16 @@
+import { Toaster } from 'react-hot-toast'
+import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import AppRoutes from './routes/AppRoutes'
+
 function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-3xl font-bold text-indigo-600">Concert Tracker</h1>
-    </main>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+        <Toaster position="top-right" />
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
