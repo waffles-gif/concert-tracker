@@ -4,8 +4,11 @@ import com.concerttracker.backend.dto.request.ConcertCreateRequest;
 import com.concerttracker.backend.dto.request.ConcertUpdateRequest;
 import com.concerttracker.backend.dto.response.ConcertDetailResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
+import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.service.ConcertService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/concerts")
@@ -34,18 +36,20 @@ public class ConcertController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ConcertResponse>> findAll() {
-        return ResponseEntity.ok(concertService.findAll());
+    public ResponseEntity<PageResponse<ConcertResponse>> findAll(
+            @PageableDefault(size = 10, sort = "date") Pageable pageable) {
+        return ResponseEntity.ok(concertService.findAll(pageable));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ConcertResponse>> search(
+    public ResponseEntity<PageResponse<ConcertResponse>> search(
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) String country,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(required = false) Boolean upcoming) {
-        return ResponseEntity.ok(concertService.search(artist, country, city, date, upcoming));
+            @RequestParam(required = false) Boolean upcoming,
+            @PageableDefault(size = 10, sort = "date") Pageable pageable) {
+        return ResponseEntity.ok(concertService.search(artist, country, city, date, upcoming, pageable));
     }
 
     @GetMapping("/{id}")

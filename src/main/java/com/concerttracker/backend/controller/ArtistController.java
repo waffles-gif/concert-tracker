@@ -4,9 +4,12 @@ import com.concerttracker.backend.dto.request.ArtistCreateRequest;
 import com.concerttracker.backend.dto.request.ArtistUpdateRequest;
 import com.concerttracker.backend.dto.response.ArtistResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
+import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.service.ArtistService;
 import com.concerttracker.backend.service.ConcertService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,8 +37,9 @@ public class ArtistController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ArtistResponse>> findAll() {
-        return ResponseEntity.ok(artistService.findAll());
+    public ResponseEntity<PageResponse<ArtistResponse>> findAll(
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        return ResponseEntity.ok(artistService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
