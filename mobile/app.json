@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Concert Tracker",
+    "slug": "concert-tracker",
+    "scheme": "concerttracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "pe.edu.utec.concerttracker"
+    },
+    "android": {
+      "package": "pe.edu.utec.concerttracker"
+    }
+  }
+}
