@@ -15,7 +15,7 @@ export default function Layout() {
         </Suspense>
       </main>
       <footer className="border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-        Concert Tracker · CS2031 Desarrollo Basado en Plataformas
+        Concert Tracker
       </footer>
     </div>
   )

@@ -1,5 +1,5 @@
-import { Music } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import logo from '../assets/logo.webp'
 import { useAuth } from '../hooks/useAuth'
 
 const linkClass = ({ isActive }) =>
@@ -19,9 +19,8 @@ export default function Navbar() {
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-3">
-        <Link to="/" className="flex items-center gap-2 text-lg font-bold text-indigo-600">
-          <Music size={22} aria-hidden="true" />
-          Concert Tracker
+        <Link to="/" aria-label="Concert Tracker, ir al inicio" className="-my-2 flex items-center">
+          <img src={logo} alt="Concert Tracker" className="h-14 w-auto" />
         </Link>
 
         <nav aria-label="Principal" className="flex flex-wrap items-center gap-1">
