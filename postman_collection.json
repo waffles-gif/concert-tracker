@@ -818,7 +818,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/artists",
+                  "raw": "{{base_url}}/api/v1/artists?page=0&size=10&sort=name,asc",
                   "host": [
                     "{{base_url}}"
                   ],
@@ -826,9 +826,23 @@
                     "api",
                     "v1",
                     "artists"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "name,asc"
+                    }
                   ]
                 },
-                "description": "Público.",
+                "description": "Público. Paginado (page, size, sort). Filtro opcional genreId para listar los artistas de un género.",
                 "auth": {
                   "type": "noauth"
                 }
@@ -840,7 +854,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{base_url}}/api/v1/artists",
+                      "raw": "{{base_url}}/api/v1/artists?page=0&size=10&sort=name,asc",
                       "host": [
                         "{{base_url}}"
                       ],
@@ -848,6 +862,20 @@
                         "api",
                         "v1",
                         "artists"
+                      ],
+                      "query": [
+                        {
+                          "key": "page",
+                          "value": "0"
+                        },
+                        {
+                          "key": "size",
+                          "value": "10"
+                        },
+                        {
+                          "key": "sort",
+                          "value": "name,asc"
+                        }
                       ]
                     }
                   },
@@ -861,7 +889,88 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null\n  },\n  {\n    \"id\": 3,\n    \"name\": \"The Strokes\",\n    \"country\": \"Estados Unidos\",\n    \"description\": null,\n    \"imageUrl\": null\n  },\n  {\n    \"id\": 4,\n    \"name\": \"Karol G\",\n    \"country\": \"Colombia\",\n    \"description\": null,\n    \"imageUrl\": null\n  },\n  {\n    \"id\": 5,\n    \"name\": \"Bizarrap\",\n    \"country\": \"Argentina\",\n    \"description\": null,\n    \"imageUrl\": null\n  }\n]"
+                  "body": "{\n  \"content\": [\n    {\n      \"id\": 2,\n      \"name\": \"Bad Bunny\",\n      \"country\": \"Puerto Rico\",\n      \"description\": null,\n      \"imageUrl\": null,\n      \"genres\": []\n    },\n    {\n      \"id\": 5,\n      \"name\": \"Bizarrap\",\n      \"country\": \"Argentina\",\n      \"description\": null,\n      \"imageUrl\": null,\n      \"genres\": []\n    },\n    {\n      \"id\": 4,\n      \"name\": \"Karol G\",\n      \"country\": \"Colombia\",\n      \"description\": null,\n      \"imageUrl\": null,\n      \"genres\": []\n    },\n    {\n      \"id\": 3,\n      \"name\": \"The Strokes\",\n      \"country\": \"Estados Unidos\",\n      \"description\": null,\n      \"imageUrl\": null,\n      \"genres\": []\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 4,\n  \"totalPages\": 1\n}"
+                }
+              ]
+            },
+            {
+              "name": "Listar artistas por género",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/artists?genreId=2&page=0&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "artists"
+                  ],
+                  "query": [
+                    {
+                      "key": "genreId",
+                      "value": "2"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Público. Devuelve solo los artistas del género indicado (útil para el onboarding). Cambia genreId por un id de /genres.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "response": [
+                {
+                  "name": "200 OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/artists?genreId=2&page=0&size=10",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "artists"
+                      ],
+                      "query": [
+                        {
+                          "key": "genreId",
+                          "value": "2"
+                        },
+                        {
+                          "key": "page",
+                          "value": "0"
+                        },
+                        {
+                          "key": "size",
+                          "value": "10"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"content\": [\n    {\n      \"id\": 2,\n      \"name\": \"Bad Bunny\",\n      \"country\": \"Puerto Rico\",\n      \"description\": null,\n      \"imageUrl\": null,\n      \"genres\": [\n        {\n          \"id\": 2,\n          \"name\": \"Reggaeton\"\n        }\n      ]\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 1,\n  \"totalPages\": 1\n}"
                 }
               ]
             },
@@ -1193,7 +1302,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/concerts",
+                  "raw": "{{base_url}}/api/v1/concerts?page=0&size=10&sort=date,asc",
                   "host": [
                     "{{base_url}}"
                   ],
@@ -1201,9 +1310,23 @@
                     "api",
                     "v1",
                     "concerts"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "date,asc"
+                    }
                   ]
                 },
-                "description": "Público. Ordenados por fecha.",
+                "description": "Público. Paginado: page (desde 0), size (máximo 100) y sort (por ejemplo date,desc). La respuesta trae content, page, size, totalElements y totalPages.",
                 "auth": {
                   "type": "noauth"
                 }
@@ -1215,7 +1338,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{base_url}}/api/v1/concerts",
+                      "raw": "{{base_url}}/api/v1/concerts?page=0&size=10&sort=date,asc",
                       "host": [
                         "{{base_url}}"
                       ],
@@ -1223,6 +1346,20 @@
                         "api",
                         "v1",
                         "concerts"
+                      ],
+                      "query": [
+                        {
+                          "key": "page",
+                          "value": "0"
+                        },
+                        {
+                          "key": "size",
+                          "value": "10"
+                        },
+                        {
+                          "key": "sort",
+                          "value": "date,asc"
+                        }
                       ]
                     }
                   },
@@ -1236,7 +1373,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": 3,\n    \"title\": \"Bad Bunny en Lima\",\n    \"date\": \"2026-10-12T20:00:00\",\n    \"ticketPrice\": 180.0,\n    \"imageUrl\": null,\n    \"artistId\": 2,\n    \"artistName\": \"Bad Bunny\",\n    \"venueId\": 2,\n    \"venueName\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\"\n  },\n  {\n    \"id\": 4,\n    \"title\": \"The Strokes en Lima\",\n    \"date\": \"2026-11-15T20:00:00\",\n    \"ticketPrice\": 220.0,\n    \"imageUrl\": null,\n    \"artistId\": 3,\n    \"artistName\": \"The Strokes\",\n    \"venueId\": 3,\n    \"venueName\": \"Arena Perú\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\"\n  },\n  {\n    \"id\": 5,\n    \"title\": \"Karol G en Lima\",\n    \"date\": \"2026-12-03T20:00:00\",\n    \"ticketPrice\": 250.0,\n    \"imageUrl\": null,\n    \"artistId\": 4,\n    \"artistName\": \"Karol G\",\n    \"venueId\": 4,\n    \"venueName\": \"Explanada Costa Verde\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\"\n  }\n]"
+                  "body": "{\n  \"content\": [\n    {\n      \"id\": 3,\n      \"title\": \"Bad Bunny en Lima\",\n      \"date\": \"2026-10-12T20:00:00\",\n      \"ticketPrice\": 180.0,\n      \"imageUrl\": null,\n      \"artistId\": 2,\n      \"artistName\": \"Bad Bunny\",\n      \"venueId\": 2,\n      \"venueName\": \"Estadio Nacional\",\n      \"city\": \"Lima\",\n      \"country\": \"Perú\"\n    },\n    {\n      \"id\": 4,\n      \"title\": \"The Strokes en Lima\",\n      \"date\": \"2026-11-15T20:00:00\",\n      \"ticketPrice\": 220.0,\n      \"imageUrl\": null,\n      \"artistId\": 3,\n      \"artistName\": \"The Strokes\",\n      \"venueId\": 3,\n      \"venueName\": \"Arena Perú\",\n      \"city\": \"Lima\",\n      \"country\": \"Perú\"\n    },\n    {\n      \"id\": 5,\n      \"title\": \"Karol G en Lima\",\n      \"date\": \"2026-12-03T20:00:00\",\n      \"ticketPrice\": 250.0,\n      \"imageUrl\": null,\n      \"artistId\": 4,\n      \"artistName\": \"Karol G\",\n      \"venueId\": 4,\n      \"venueName\": \"Explanada Costa Verde\",\n      \"city\": \"Lima\",\n      \"country\": \"Perú\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 3,\n  \"totalPages\": 1\n}"
                 }
               ]
             },
@@ -1301,7 +1438,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/concerts/search?artist=bad&country=Perú&city=Lima&upcoming=true",
+                  "raw": "{{base_url}}/api/v1/concerts/search?artist=bad&country=Perú&city=Lima&upcoming=true&page=0&size=10",
                   "host": [
                     "{{base_url}}"
                   ],
@@ -1327,10 +1464,18 @@
                     {
                       "key": "upcoming",
                       "value": "true"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
                     }
                   ]
                 },
-                "description": "Público. Filtros opcionales: artist, country, city, date (yyyy-MM-dd), upcoming (true/false).",
+                "description": "Público. Filtros opcionales: artist, country, city, date (yyyy-MM-dd) y upcoming (true/false). Paginado igual que el listado.",
                 "auth": {
                   "type": "noauth"
                 }
@@ -1342,7 +1487,7 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{base_url}}/api/v1/concerts/search?artist=bad&country=Perú&city=Lima&upcoming=true",
+                      "raw": "{{base_url}}/api/v1/concerts/search?artist=bad&country=Perú&city=Lima&upcoming=true&page=0&size=10",
                       "host": [
                         "{{base_url}}"
                       ],
@@ -1368,6 +1513,14 @@
                         {
                           "key": "upcoming",
                           "value": "true"
+                        },
+                        {
+                          "key": "page",
+                          "value": "0"
+                        },
+                        {
+                          "key": "size",
+                          "value": "10"
                         }
                       ]
                     }
@@ -1382,7 +1535,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "[\n  {\n    \"id\": 3,\n    \"title\": \"Bad Bunny en Lima\",\n    \"date\": \"2026-10-12T20:00:00\",\n    \"ticketPrice\": 180.0,\n    \"imageUrl\": null,\n    \"artistId\": 2,\n    \"artistName\": \"Bad Bunny\",\n    \"venueId\": 2,\n    \"venueName\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\"\n  }\n]"
+                  "body": "{\n  \"content\": [],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 0,\n  \"totalPages\": 0\n}"
                 }
               ]
             },
@@ -2082,6 +2235,71 @@
                   ],
                   "cookie": [],
                   "body": "{\n  \"status\": 403,\n  \"error\": \"Forbidden\",\n  \"message\": \"No tienes permisos para realizar esta acción\",\n  \"path\": \"/api/v1/venues\",\n  \"timestamp\": \"2026-09-20T17:37:53.83181\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "400 - Campo de ordenamiento inválido",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/concerts?sort=noexiste,asc",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "concerts"
+                  ],
+                  "query": [
+                    {
+                      "key": "sort",
+                      "value": "noexiste,asc"
+                    }
+                  ]
+                },
+                "description": "Devuelve 400 si el campo de sort no existe.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "response": [
+                {
+                  "name": "400 Bad Request",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/concerts?sort=noexiste,asc",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "concerts"
+                      ],
+                      "query": [
+                        {
+                          "key": "sort",
+                          "value": "noexiste,asc"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Campo de ordenamiento inválido: noexiste\",\n  \"path\": \"/api/v1/concerts\",\n  \"timestamp\": \"2026-10-16T18:46:16.802352\"\n}"
                 }
               ]
             }

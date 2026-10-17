@@ -6,6 +6,7 @@ import com.concerttracker.backend.dto.response.ArtistResponse;
 import com.concerttracker.backend.dto.response.ConcertDetailResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
 import com.concerttracker.backend.dto.response.GenreResponse;
+import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.VenueResponse;
 import com.concerttracker.backend.entity.Artist;
 import com.concerttracker.backend.entity.Concert;
@@ -17,7 +18,7 @@ import com.concerttracker.backend.repository.ConcertRepository;
 import com.concerttracker.backend.repository.ConcertSpecifications;
 import com.concerttracker.backend.repository.VenueRepository;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,8 +60,8 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ConcertResponse> findAll() {
-        return concertRepository.findAll(Sort.by("date")).stream().map(this::toResponse).toList();
+    public PageResponse<ConcertResponse> findAll(Pageable pageable) {
+        return PageResponse.from(concertRepository.findAll(pageable).map(this::toResponse));
     }
 
     @Override
@@ -90,8 +91,8 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ConcertResponse> search(String artist, String country, String city,
-                                        LocalDate date, Boolean upcoming) {
+    public PageResponse<ConcertResponse> search(String artist, String country, String city,
+                                                LocalDate date, Boolean upcoming, Pageable pageable) {
         Specification<Concert> spec = Specification.unrestricted();
         if (artist != null && !artist.isBlank()) {
             spec = spec.and(ConcertSpecifications.artistNameContains(artist.trim()));
@@ -108,7 +109,7 @@ public class ConcertServiceImpl implements ConcertService {
         if (upcoming != null) {
             spec = spec.and(ConcertSpecifications.upcoming(upcoming));
         }
-        return concertRepository.findAll(spec, Sort.by("date")).stream().map(this::toResponse).toList();
+        return PageResponse.from(concertRepository.findAll(spec, pageable).map(this::toResponse));
     }
 
     @Override

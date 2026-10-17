@@ -4,6 +4,7 @@ import com.concerttracker.backend.dto.request.ArtistCreateRequest;
 import com.concerttracker.backend.dto.request.ArtistUpdateRequest;
 import com.concerttracker.backend.dto.response.ArtistResponse;
 import com.concerttracker.backend.dto.response.GenreResponse;
+import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.entity.Artist;
 import com.concerttracker.backend.entity.Genre;
 import com.concerttracker.backend.exception.DuplicateResourceException;
@@ -12,6 +13,8 @@ import com.concerttracker.backend.exception.ResourceNotFoundException;
 import com.concerttracker.backend.repository.ArtistRepository;
 import com.concerttracker.backend.repository.ConcertRepository;
 import com.concerttracker.backend.repository.GenreRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +51,11 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ArtistResponse> findAll() {
-        return artistRepository.findAll().stream().map(this::toResponse).toList();
+    public PageResponse<ArtistResponse> findAll(Long genreId, Pageable pageable) {
+        Page<Artist> artists = genreId == null
+                ? artistRepository.findAll(pageable)
+                : artistRepository.findByGenres_Id(genreId, pageable);
+        return PageResponse.from(artists.map(this::toResponse));
     }
 
     @Override
