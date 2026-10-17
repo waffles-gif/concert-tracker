@@ -1,13 +1,17 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import LoadingScreen from '../components/LoadingScreen'
 import { useAuth } from '../hooks/useAuth'
-import HomeScreen from '../screens/HomeScreen'
+import ConcertDetailScreen from '../screens/ConcertDetailScreen'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
+import { colors } from '../theme'
+import AppTabs from './AppTabs'
 
 const Stack = createNativeStackNavigator()
 
-// Con sesión se ve la app; sin sesión, solo login y registro.
+// Stack principal:
+// - Sin sesión: Login y Register.
+// - Con sesión: las tabs (Conciertos, Perfil) y encima las pantallas de detalle.
 // Al cambiar `user` en AuthContext, React Navigation cambia de grupo solo (no hace falta navigate).
 export default function RootNavigator() {
   const { isAuthenticated, initializing } = useAuth()
@@ -15,9 +19,12 @@ export default function RootNavigator() {
   if (initializing) return <LoadingScreen message="Recuperando tu sesión…" />
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerTintColor: colors.primary, headerBackTitle: 'Atrás' }}>
       {isAuthenticated ? (
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Concert Tracker' }} />
+        <>
+          <Stack.Screen name="Tabs" component={AppTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="ConcertDetail" component={ConcertDetailScreen} options={{ title: 'Concierto' }} />
+        </>
       ) : (
         <Stack.Group screenOptions={{ headerShown: false, animationTypeForReplace: 'pop' }}>
           <Stack.Screen name="Login" component={LoginScreen} />
