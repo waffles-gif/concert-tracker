@@ -12,6 +12,9 @@
     },
     "android": {
       "package": "pe.edu.utec.concerttracker"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
