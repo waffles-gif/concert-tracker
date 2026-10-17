@@ -60,4 +60,12 @@ public class UserInteractionController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userInteractionService.followArtist(userId, dto));
     }
+
+    // Endpoint 5: Dejar de seguir a un artista (404 si no lo seguía)
+    @DeleteMapping("/follow/{artistId}")
+    public ResponseEntity<Void> unfollowArtist(@PathVariable Long artistId) {
+        Long userId = securityUtils.getCurrentUserId();
+        userInteractionService.unfollowArtist(userId, artistId);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -19,4 +19,6 @@ public interface UserInteractionService {
     ReviewResponseDto createReview(Long userId, ReviewRequestDto dto);
 
     FollowResponseDto followArtist(Long userId, FollowRequestDto dto);
+
+    void unfollowArtist(Long userId, Long artistId);
 }
