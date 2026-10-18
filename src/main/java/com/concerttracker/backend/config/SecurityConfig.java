@@ -90,6 +90,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/concerts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/artists/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/venues/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                         // Todo lo demás requiere token válido;
                         // ADMIN específico se controla con @PreAuthorize en cada controller
                         .anyRequest().authenticated()

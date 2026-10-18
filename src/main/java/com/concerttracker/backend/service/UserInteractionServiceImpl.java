@@ -180,4 +180,12 @@ public class UserInteractionServiceImpl implements UserInteractionService {
                 saved.getCreatedAt()
         );
     }
+
+    @Override
+    @Transactional
+    public void unfollowArtist(Long userId, Long artistId) {
+        Follow follow = followRepository.findByUser_IdAndArtist_Id(userId, artistId)
+                .orElseThrow(() -> new ResourceNotFoundException("No sigues al artista con id " + artistId));
+        followRepository.delete(follow);
+    }
 }
