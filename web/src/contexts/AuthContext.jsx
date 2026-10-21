@@ -53,6 +53,9 @@ export function AuthProvider({ children }) {
     setUser(null)
   }, [])
 
+  // Para refrescar los datos del usuario en pantalla después de editar su perfil
+  const updateUser = useCallback((nextUser) => setUser(nextUser), [])
+
   const value = useMemo(
     () => ({
       user,
@@ -62,8 +65,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      updateUser,
     }),
-    [user, initializing, login, register, logout],
+    [user, initializing, login, register, logout, updateUser],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -4,6 +4,7 @@ import com.concerttracker.backend.dto.request.ConcertCreateRequest;
 import com.concerttracker.backend.dto.request.ConcertUpdateRequest;
 import com.concerttracker.backend.dto.response.ConcertDetailResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
+import com.concerttracker.backend.dto.response.ConcertReviewResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -24,6 +25,8 @@ public interface ConcertService {
 
     PageResponse<ConcertResponse> search(String artist, String country, String city, LocalDate date,
                                          Boolean upcoming, Pageable pageable);
+
+    PageResponse<ConcertReviewResponse> findReviews(Long concertId, Pageable pageable);
 
     List<ConcertResponse> findByVenue(Long venueId);
 

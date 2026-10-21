@@ -114,6 +114,13 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Campo de ordenamiento inválido: " + ex.getPropertyName(), request);
     }
 
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<ErrorResponseDTO> handleExternalService(ExternalServiceException ex,
+                                                                   HttpServletRequest request) {
+        log.warn("Fallo con un servicio externo en {}: {}", request.getRequestURI(), ex.getMessage());
+        return build(HttpStatus.BAD_GATEWAY, ex.getMessage(), request);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrity(DataIntegrityViolationException ex,
                                                                  HttpServletRequest request) {

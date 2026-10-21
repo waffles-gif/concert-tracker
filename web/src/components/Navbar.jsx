@@ -29,6 +29,9 @@ export default function Navbar() {
           </NavLink>
           {isAuthenticated ? (
             <>
+              <NavLink to="/mis-conciertos" className={linkClass}>
+                Mis conciertos
+              </NavLink>
               <NavLink to="/perfil" className={linkClass}>
                 {user.name}
               </NavLink>

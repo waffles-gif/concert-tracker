@@ -1394,7 +1394,7 @@
                     "3"
                   ]
                 },
-                "description": "Público. Incluye artista y venue embebidos.",
+                "description": "Público. Incluye el artista, el venue y las zonas de entradas (`zones`, de la más barata a la más cara). `ticketPrice` es el precio 'desde' (el de la zona más barata).",
                 "auth": {
                   "type": "noauth"
                 }
@@ -1428,7 +1428,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": 3,\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180.0,\n  \"imageUrl\": null,\n  \"artist\": {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null\n  },\n  \"venue\": {\n    \"id\": 2,\n    \"name\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\",\n    \"address\": null,\n    \"capacity\": null\n  }\n}"
+                  "body": "{\n  \"id\": 3,\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180.0,\n  \"imageUrl\": null,\n  \"artist\": {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null,\n    \"genres\": [\n      {\n        \"id\": 3,\n        \"name\": \"Reggaeton\"\n      }\n    ]\n  },\n  \"venue\": {\n    \"id\": 2,\n    \"name\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\",\n    \"address\": null,\n    \"capacity\": null\n  },\n  \"zones\": [\n    {\n      \"id\": 42,\n      \"name\": \"Tribuna General\",\n      \"price\": 180.0\n    },\n    {\n      \"id\": 43,\n      \"name\": \"Tribuna Preferencial\",\n      \"price\": 270.0\n    },\n    {\n      \"id\": 44,\n      \"name\": \"Campo General\",\n      \"price\": 360.0\n    },\n    {\n      \"id\": 45,\n      \"name\": \"Campo VIP\",\n      \"price\": 540.0\n    }\n  ]\n}"
                 }
               ]
             },
@@ -1540,6 +1540,91 @@
               ]
             },
             {
+              "name": "Listar reseñas de un concierto",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/concerts/12/reviews?page=0&size=10&sort=createdAt,desc",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "concerts",
+                    "12",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "createdAt,desc"
+                    }
+                  ]
+                },
+                "description": "Público. Reseñas del concierto, paginadas (page desde 0, size máximo 100, sort por createdAt, más recientes primero). Solo muestra el nombre del autor, nunca su email. Devuelve 404 si el concierto no existe. Con los datos demo, el concierto 12 tiene reseñas.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "response": [
+                {
+                  "name": "200 OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/concerts/12/reviews?page=0&size=10&sort=createdAt,desc",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "concerts",
+                        "12",
+                        "reviews"
+                      ],
+                      "query": [
+                        {
+                          "key": "page",
+                          "value": "0"
+                        },
+                        {
+                          "key": "size",
+                          "value": "10"
+                        },
+                        {
+                          "key": "sort",
+                          "value": "createdAt,desc"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"content\": [\n    {\n      \"id\": 25,\n      \"userName\": \"Mateo Salazar\",\n      \"rating\": 5,\n      \"comment\": \"Buen concierto, aunque la salida del recinto fue algo caótica.\",\n      \"createdAt\": \"2026-10-21T11:33:21.791605\"\n    },\n    {\n      \"id\": 12,\n      \"userName\": \"Diego Mendoza\",\n      \"rating\": 3,\n      \"comment\": \"Muy buena energía, pero el ingreso tardó demasiado.\",\n      \"createdAt\": \"2026-10-21T11:33:21.618343\"\n    },\n    {\n      \"id\": 3,\n      \"userName\": \"Usuario Demo\",\n      \"rating\": 4,\n      \"comment\": \"Cantó todos sus clásicos y el público no paró de bailar.\",\n      \"createdAt\": \"2026-10-21T11:33:21.445305\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 3,\n  \"totalPages\": 1\n}"
+                }
+              ]
+            },
+            {
               "name": "Crear concierto",
               "request": {
                 "method": "POST",
@@ -1560,10 +1645,10 @@
                     "concerts"
                   ]
                 },
-                "description": "Devuelve 201. Publica el evento ConcertCreatedEvent. Requiere rol ADMIN.",
+                "description": "Devuelve 201. Publica el evento ConcertCreatedEvent. Requiere rol ADMIN.\n\n`zones` es opcional: lista de zonas de entradas (`name` y `price`). Si se envía, `ticketPrice` pasa a ser el precio de la zona más barata. Los nombres de zona no pueden repetirse (409).",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Concierto Nuevo\",\n  \"date\": \"2027-01-20T20:00:00\",\n  \"ticketPrice\": 100,\n  \"artistId\": 2,\n  \"venueId\": 2\n}",
+                  "raw": "{\n  \"title\": \"Concierto Nuevo\",\n  \"date\": \"2027-01-20T20:00:00\",\n  \"ticketPrice\": 100,\n  \"artistId\": 2,\n  \"venueId\": 2,\n  \"zones\": [\n    {\n      \"name\": \"General\",\n      \"price\": 100\n    },\n    {\n      \"name\": \"VIP\",\n      \"price\": 250\n    }\n  ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1595,7 +1680,7 @@
                     },
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"title\": \"Concierto Nuevo\",\n  \"date\": \"2027-01-20T20:00:00\",\n  \"ticketPrice\": 100,\n  \"artistId\": 2,\n  \"venueId\": 2\n}",
+                      "raw": "{\n  \"title\": \"Concierto Nuevo\",\n  \"date\": \"2027-01-20T20:00:00\",\n  \"ticketPrice\": 100,\n  \"artistId\": 2,\n  \"venueId\": 2,\n  \"zones\": [\n    {\n      \"name\": \"General\",\n      \"price\": 100\n    },\n    {\n      \"name\": \"VIP\",\n      \"price\": 250\n    }\n  ]\n}",
                       "options": {
                         "raw": {
                           "language": "json"
@@ -1613,7 +1698,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": 6,\n  \"title\": \"Concierto Nuevo\",\n  \"date\": \"2027-01-20T20:00:00\",\n  \"ticketPrice\": 100,\n  \"imageUrl\": null,\n  \"artist\": {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null\n  },\n  \"venue\": {\n    \"id\": 2,\n    \"name\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\",\n    \"address\": null,\n    \"capacity\": null\n  }\n}"
+                  "body": "{\n  \"id\": 44,\n  \"title\": \"Concierto Nuevo\",\n  \"date\": \"2027-01-20T20:00:00\",\n  \"ticketPrice\": 100,\n  \"imageUrl\": null,\n  \"artist\": {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null,\n    \"genres\": [\n      {\n        \"id\": 3,\n        \"name\": \"Reggaeton\"\n      }\n    ]\n  },\n  \"venue\": {\n    \"id\": 2,\n    \"name\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\",\n    \"address\": null,\n    \"capacity\": null\n  },\n  \"zones\": [\n    {\n      \"id\": 123,\n      \"name\": \"General\",\n      \"price\": 100\n    },\n    {\n      \"id\": 124,\n      \"name\": \"VIP\",\n      \"price\": 250\n    }\n  ]\n}"
                 }
               ]
             },
@@ -1639,10 +1724,10 @@
                     "3"
                   ]
                 },
-                "description": " Requiere rol ADMIN.",
+                "description": "Requiere rol ADMIN.\n\n`zones` es opcional: si no se envía, las zonas no cambian; con una lista vacía se quitan todas; con elementos se reemplazan (y `ticketPrice` pasa a ser el precio de la zona más barata).",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180,\n  \"artistId\": 2,\n  \"venueId\": 2\n}",
+                  "raw": "{\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180.0,\n  \"artistId\": 2,\n  \"venueId\": 2,\n  \"zones\": [\n    {\n      \"name\": \"Tribuna General\",\n      \"price\": 180.0\n    },\n    {\n      \"name\": \"Tribuna Preferencial\",\n      \"price\": 270.0\n    },\n    {\n      \"name\": \"Campo General\",\n      \"price\": 360.0\n    },\n    {\n      \"name\": \"Campo VIP\",\n      \"price\": 540.0\n    }\n  ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1675,7 +1760,7 @@
                     },
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180,\n  \"artistId\": 2,\n  \"venueId\": 2\n}",
+                      "raw": "{\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180.0,\n  \"artistId\": 2,\n  \"venueId\": 2,\n  \"zones\": [\n    {\n      \"name\": \"Tribuna General\",\n      \"price\": 180.0\n    },\n    {\n      \"name\": \"Tribuna Preferencial\",\n      \"price\": 270.0\n    },\n    {\n      \"name\": \"Campo General\",\n      \"price\": 360.0\n    },\n    {\n      \"name\": \"Campo VIP\",\n      \"price\": 540.0\n    }\n  ]\n}",
                       "options": {
                         "raw": {
                           "language": "json"
@@ -1693,7 +1778,7 @@
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n  \"id\": 3,\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180,\n  \"imageUrl\": null,\n  \"artist\": {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null\n  },\n  \"venue\": {\n    \"id\": 2,\n    \"name\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\",\n    \"address\": null,\n    \"capacity\": null\n  }\n}"
+                  "body": "{\n  \"id\": 3,\n  \"title\": \"Bad Bunny en Lima\",\n  \"date\": \"2026-10-12T20:00:00\",\n  \"ticketPrice\": 180.0,\n  \"imageUrl\": null,\n  \"artist\": {\n    \"id\": 2,\n    \"name\": \"Bad Bunny\",\n    \"country\": \"Puerto Rico\",\n    \"description\": null,\n    \"imageUrl\": null,\n    \"genres\": [\n      {\n        \"id\": 3,\n        \"name\": \"Reggaeton\"\n      }\n    ]\n  },\n  \"venue\": {\n    \"id\": 2,\n    \"name\": \"Estadio Nacional\",\n    \"city\": \"Lima\",\n    \"country\": \"Perú\",\n    \"address\": null,\n    \"capacity\": null\n  },\n  \"zones\": [\n    {\n      \"id\": 125,\n      \"name\": \"Tribuna General\",\n      \"price\": 180.0\n    },\n    {\n      \"id\": 126,\n      \"name\": \"Tribuna Preferencial\",\n      \"price\": 270.0\n    },\n    {\n      \"id\": 127,\n      \"name\": \"Campo General\",\n      \"price\": 360.0\n    },\n    {\n      \"id\": 128,\n      \"name\": \"Campo VIP\",\n      \"price\": 540.0\n    }\n  ]\n}"
                 }
               ]
             },
@@ -2302,6 +2387,63 @@
                   "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Campo de ordenamiento inválido: noexiste\",\n  \"path\": \"/api/v1/concerts\",\n  \"timestamp\": \"2026-10-16T18:46:16.802352\"\n}"
                 }
               ]
+            },
+            {
+              "name": "404 - Reseñas de concierto inexistente",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/concerts/99999/reviews",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "concerts",
+                    "99999",
+                    "reviews"
+                  ]
+                },
+                "description": "Devuelve 404 si el concierto no existe.",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "response": [
+                {
+                  "name": "404 Not Found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/concerts/99999/reviews",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "concerts",
+                        "99999",
+                        "reviews"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"status\": 404,\n  \"error\": \"Not Found\",\n  \"message\": \"Concierto no encontrado con id: 99999\",\n  \"path\": \"/api/v1/concerts/99999/reviews\",\n  \"timestamp\": \"2026-10-21T11:37:37.852202\"\n}"
+                }
+              ]
             }
           ]
         }
@@ -2897,6 +3039,353 @@
           ]
         },
         {
+          "name": "Mis conciertos (historial con datos del concierto)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-interactions/my-concerts?status=VOY_A_IR&page=0&size=2&sort=concert.date,asc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user-interactions",
+                "my-concerts"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "VOY_A_IR",
+                  "description": "Opcional: VOY_A_IR (próximos) o YA_FUI (pasados). Sin filtro devuelve ambos."
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "2"
+                },
+                {
+                  "key": "sort",
+                  "value": "concert.date,asc"
+                }
+              ]
+            },
+            "description": "Historial personal paginado, con los datos del concierto dentro de cada elemento. Requiere token.\n\nQuery params (todos opcionales):\n- `status`: `VOY_A_IR` o `YA_FUI`\n- `page` (desde 0), `size` (máximo 100)\n- `sort`: por defecto `concert.date,asc`; usa `concert.date,desc` para ver los más recientes primero\n\nCada elemento trae `attendanceId`, `status`, `markedAt`, `reviewed` (si ya dejó reseña) y `concert`."
+          },
+          "response": [
+            {
+              "name": "200 OK - Voy a ir",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/user-interactions/my-concerts?status=VOY_A_IR&page=0&size=2&sort=concert.date,asc",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "user-interactions",
+                    "my-concerts"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "VOY_A_IR"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "2"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "concert.date,asc"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"attendanceId\": 50,\n      \"status\": \"VOY_A_IR\",\n      \"markedAt\": \"2026-10-21T11:55:30.309443\",\n      \"reviewed\": false,\n      \"concert\": {\n        \"id\": 22,\n        \"title\": \"Karol G: Noche Tropical\",\n        \"date\": \"2026-08-08T20:00:00\",\n        \"ticketPrice\": 240.0,\n        \"imageUrl\": null,\n        \"artistId\": 4,\n        \"artistName\": \"Karol G\",\n        \"venueId\": 4,\n        \"venueName\": \"Explanada Costa Verde\",\n        \"city\": \"Lima\",\n        \"country\": \"Perú\"\n      }\n    },\n    {\n      \"attendanceId\": 10,\n      \"status\": \"VOY_A_IR\",\n      \"markedAt\": \"2026-10-21T11:33:21.452355\",\n      \"reviewed\": false,\n      \"concert\": {\n        \"id\": 24,\n        \"title\": \"Shakira: Segunda Noche\",\n        \"date\": \"2026-10-24T20:00:00\",\n        \"ticketPrice\": 290.0,\n        \"imageUrl\": null,\n        \"artistId\": 8,\n        \"artistName\": \"Shakira\",\n        \"venueId\": 2,\n        \"venueName\": \"Estadio Nacional\",\n        \"city\": \"Lima\",\n        \"country\": \"Perú\"\n      }\n    }\n  ],\n  \"page\": 0,\n  \"size\": 2,\n  \"totalElements\": 5,\n  \"totalPages\": 3\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mi estado en un concierto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-interactions/concerts/12",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user-interactions",
+                "concerts",
+                "12"
+              ]
+            },
+            "description": "Cómo se relaciona el usuario logueado con un concierto: `attendanceStatus` (VOY_A_IR, YA_FUI o null si no marcó nada) y `reviewed` (si ya dejó reseña). Requiere token. 404 si el concierto no existe."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/user-interactions/concerts/12",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "user-interactions",
+                    "concerts",
+                    "12"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"attendanceStatus\": \"YA_FUI\",\n  \"reviewed\": true,\n  \"favorite\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "Agregar a favoritos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-interactions/favorites/4",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user-interactions",
+                "favorites",
+                "4"
+              ]
+            },
+            "description": "Guarda el concierto en los favoritos del usuario logueado. Es idempotente: repetir la llamada no da error. Responde 204; 404 si el concierto no existe. Requiere token."
+          },
+          "response": [
+            {
+              "name": "204 No Content",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/user-interactions/favorites/4",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "user-interactions",
+                    "favorites",
+                    "4"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Quitar de favoritos",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-interactions/favorites/4",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user-interactions",
+                "favorites",
+                "4"
+              ]
+            },
+            "description": "Quita el concierto de los favoritos del usuario logueado. Es idempotente. Responde 204. Requiere token."
+          },
+          "response": [
+            {
+              "name": "204 No Content",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/user-interactions/favorites/4",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "user-interactions",
+                    "favorites",
+                    "4"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
           "name": "Crear reseña",
           "request": {
             "method": "POST",
@@ -3409,6 +3898,343 @@
                 }
               ],
               "body": "{\n  \"timestamp\": \"2026-09-22T18:30:00\",\n  \"status\": 409,\n  \"error\": \"Conflict\",\n  \"message\": \"Ya sigues a este artista.\",\n  \"path\": \"/api/v1/user-interactions/follow\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users (Perfil)",
+      "item": [
+        {
+          "name": "Ver mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ]
+            },
+            "description": "Perfil del usuario logueado (incluye `bio`). Requiere token."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/users/me",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "me"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 9,\n  \"name\": \"Usuario Demo\",\n  \"email\": \"demo@concerttracker.com\",\n  \"role\": \"USER\",\n  \"country\": \"Perú\",\n  \"city\": \"Lima\",\n  \"bio\": null,\n  \"createdAt\": \"2026-10-21T11:33:21.41749\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Editar mi perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ]
+            },
+            "description": "Actualiza nombre, país, ciudad y bio del usuario logueado. `name` es obligatorio (máx. 100); `bio` máx. 300 caracteres; los campos en blanco se guardan como vacíos. Requiere token.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tester Web\",\n  \"country\": \"Perú\",\n  \"city\": \"Lima\",\n  \"bio\": \"Fan del rock y de los conciertos en estadio.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/users/me",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "me"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tester Web\",\n  \"country\": \"Perú\",\n  \"city\": \"Lima\",\n  \"bio\": \"Fan del rock y de los conciertos en estadio.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 8,\n  \"name\": \"Tester Web\",\n  \"email\": \"web.tester@example.com\",\n  \"role\": \"USER\",\n  \"country\": \"Perú\",\n  \"city\": \"Lima\",\n  \"bio\": \"Fan del rock y de los conciertos en estadio.\",\n  \"createdAt\": \"2026-10-16T18:53:30.397889\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mis conciertos favoritos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me/favorite-concerts?page=0&size=12",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me",
+                "favorite-concerts"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "12"
+                }
+              ]
+            },
+            "description": "Conciertos que el usuario guardó en favoritos, paginados (`page` desde 0, `size` máximo 100), los agregados más recientemente primero. Cada elemento trae `addedAt` y `concert`. Requiere token."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/users/me/favorite-concerts?page=0&size=12",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "me",
+                    "favorite-concerts"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "12"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"addedAt\": \"2026-10-21T12:30:57.05829\",\n      \"concert\": {\n        \"id\": 3,\n        \"title\": \"Bad Bunny en Lima\",\n        \"date\": \"2026-10-12T20:00:00\",\n        \"ticketPrice\": 180.0,\n        \"imageUrl\": null,\n        \"artistId\": 2,\n        \"artistName\": \"Bad Bunny\",\n        \"venueId\": 2,\n        \"venueName\": \"Estadio Nacional\",\n        \"city\": \"Lima\",\n        \"country\": \"Perú\"\n      }\n    }\n  ],\n  \"page\": 0,\n  \"size\": 12,\n  \"totalElements\": 1,\n  \"totalPages\": 1\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin (Sincronización)",
+      "item": [
+        {
+          "name": "Sincronizar conciertos con Ticketmaster",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/sync/ticketmaster",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "sync",
+                "ticketmaster"
+              ]
+            },
+            "description": "Solo ADMIN. Importa y actualiza los conciertos de música de Ticketmaster para el país configurado (`ticketmaster.country-code`, por defecto PE). Es idempotente: cada concierto se identifica por su id de Ticketmaster, así que repetirla actualiza lo existente y solo crea lo nuevo. Los nuevos publican ConcertCreatedEvent (avisa a los seguidores del artista). Ticketmaster no entrega precios por zona, así que los importados quedan con `ticketPrice` null y un `ticketUrl` para comprar en la página oficial. Responde `fetched`, `created`, `updated` y `skipped`. Requiere la clave `ticketmaster.api-key`; si falta o es inválida responde 502. También puede correr sola todos los días con `ticketmaster.sync.enabled=true`."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/admin/sync/ticketmaster",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "sync",
+                    "ticketmaster"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"fetched\": 31,\n  \"created\": 0,\n  \"updated\": 0,\n  \"skipped\": 0,\n  \"zonesUpdated\": 0\n}"
             }
           ]
         }

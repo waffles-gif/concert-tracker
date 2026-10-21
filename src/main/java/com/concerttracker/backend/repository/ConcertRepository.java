@@ -12,6 +12,9 @@ public interface ConcertRepository extends JpaRepository<Concert, Long>, JpaSpec
 
     List<Concert> findByArtistIdOrderByDateAsc(Long artistId);
 
+    // Para la sincronización con APIs externas: conciertos ya importados
+    List<Concert> findByExternalIdIn(java.util.Collection<String> externalIds);
+
     boolean existsByVenueId(Long venueId);
 
     boolean existsByArtistId(Long artistId);

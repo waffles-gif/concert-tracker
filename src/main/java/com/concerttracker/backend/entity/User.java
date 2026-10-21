@@ -50,6 +50,9 @@ public class User {
     @Column(length = 100)
     private String city;
 
+    @Column(length = 300)
+    private String bio;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -123,6 +126,14 @@ public class User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public LocalDateTime getCreatedAt() {

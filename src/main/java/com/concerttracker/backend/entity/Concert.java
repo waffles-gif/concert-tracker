@@ -33,6 +33,14 @@ public class Concert {
     @Column(length = 500)
     private String imageUrl;
 
+    // Enlace oficial para comprar entradas (por ejemplo, la página del evento en Ticketmaster)
+    @Column(length = 500)
+    private String ticketUrl;
+
+    // Id del evento en la API externa de la que se importó (por ejemplo "tm:Z7r9jZ1A7..."); null si es manual
+    @Column(unique = true, length = 100)
+    private String externalId;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
@@ -88,6 +96,27 @@ public class Concert {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getTicketUrl() {
+        return ticketUrl;
+    }
+
+    public void setTicketUrl(String ticketUrl) {
+        this.ticketUrl = ticketUrl;
+    }
+
+    // true si es un concierto de ejemplo cargado por DemoDataLoader (su externalId empieza con "demo:")
+    public boolean isDemo() {
+        return externalId != null && externalId.startsWith("demo:");
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public Artist getArtist() {
