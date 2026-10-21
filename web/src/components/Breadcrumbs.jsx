@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 const LABELS = {
   conciertos: 'Conciertos',
   artistas: 'Artistas',
+  'mis-conciertos': 'Mis conciertos',
   perfil: 'Mi perfil',
   login: 'Iniciar sesión',
   register: 'Registro',
@@ -11,10 +12,11 @@ const LABELS = {
 export default function Breadcrumbs() {
   const { pathname } = useLocation()
   const segments = pathname.split('/').filter(Boolean)
-  if (segments.length === 0) return null
+  //(404)
+  if (segments.length === 0 || !LABELS[segments[0]]) return null
 
   const crumbs = segments.map((segment, index) => ({
-    label: LABELS[segment] ?? `#${decodeURIComponent(segment)}`,
+    label: LABELS[segment] ?? 'Detalle',
     to: `/${segments.slice(0, index + 1).join('/')}`,
   }))
 

@@ -2,20 +2,27 @@ package com.concerttracker.backend.service;
 
 import com.concerttracker.backend.dto.request.ConcertCreateRequest;
 import com.concerttracker.backend.dto.request.ConcertUpdateRequest;
+import com.concerttracker.backend.dto.request.ZoneRequest;
 import com.concerttracker.backend.dto.response.ArtistResponse;
 import com.concerttracker.backend.dto.response.ConcertDetailResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
+import com.concerttracker.backend.dto.response.ConcertReviewResponse;
 import com.concerttracker.backend.dto.response.GenreResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.VenueResponse;
+import com.concerttracker.backend.dto.response.ZoneResponse;
 import com.concerttracker.backend.entity.Artist;
 import com.concerttracker.backend.entity.Concert;
+import com.concerttracker.backend.entity.ConcertZone;
 import com.concerttracker.backend.entity.Venue;
 import com.concerttracker.backend.event.ConcertCreatedEvent;
+import com.concerttracker.backend.exception.DuplicateResourceException;
 import com.concerttracker.backend.exception.ResourceNotFoundException;
 import com.concerttracker.backend.repository.ArtistRepository;
 import com.concerttracker.backend.repository.ConcertRepository;
+import com.concerttracker.backend.repository.ConcertZoneRepository;
 import com.concerttracker.backend.repository.ConcertSpecifications;
+import com.concerttracker.backend.repository.ReviewRepository;
 import com.concerttracker.backend.repository.VenueRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ConcertServiceImpl implements ConcertService {
@@ -33,15 +42,21 @@ public class ConcertServiceImpl implements ConcertService {
     private final ConcertRepository concertRepository;
     private final ArtistRepository artistRepository;
     private final VenueRepository venueRepository;
+    private final ReviewRepository reviewRepository;
+    private final ConcertZoneRepository zoneRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public ConcertServiceImpl(ConcertRepository concertRepository,
                               ArtistRepository artistRepository,
                               VenueRepository venueRepository,
+                              ReviewRepository reviewRepository,
+                              ConcertZoneRepository zoneRepository,
                               ApplicationEventPublisher eventPublisher) {
         this.concertRepository = concertRepository;
         this.artistRepository = artistRepository;
         this.venueRepository = venueRepository;
+        this.reviewRepository = reviewRepository;
+        this.zoneRepository = zoneRepository;
         this.eventPublisher = eventPublisher;
     }
 
@@ -53,6 +68,9 @@ public class ConcertServiceImpl implements ConcertService {
         Concert concert = new Concert(request.getTitle(), request.getDate(), request.getTicketPrice(),
                 request.getImageUrl(), artist, venue);
         Concert saved = concertRepository.save(concert);
+        if (request.getZones() != null && !request.getZones().isEmpty()) {
+            replaceZones(saved, request.getZones());
+        }
         eventPublisher.publishEvent(new ConcertCreatedEvent(
                 saved.getId(), artist.getId(), venue.getCountry(), venue.getCity()));
         return toDetailResponse(saved);
@@ -80,13 +98,38 @@ public class ConcertServiceImpl implements ConcertService {
         concert.setImageUrl(request.getImageUrl());
         concert.setArtist(findArtist(request.getArtistId()));
         concert.setVenue(findVenue(request.getVenueId()));
+        if (request.getZones() != null) {
+            replaceZones(concert, request.getZones());
+        }
         return toDetailResponse(concertRepository.save(concert));
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        concertRepository.delete(findEntityById(id));
+        Concert concert = findEntityById(id);
+        zoneRepository.deleteByConcertId(id);
+        concertRepository.delete(concert);
+    }
+
+    // Reemplaza todas las zonas del concierto. Si queda alguna, el precio "desde" del concierto
+    // pasa a ser el de la zona más barata.
+    private void replaceZones(Concert concert, List<ZoneRequest> zones) {
+        Set<String> names = new HashSet<>();
+        for (ZoneRequest zone : zones) {
+            if (!names.add(zone.name().trim().toLowerCase())) {
+                throw new DuplicateResourceException("La zona '" + zone.name().trim() + "' está repetida");
+            }
+        }
+        zoneRepository.deleteByConcertId(concert.getId());
+        zoneRepository.saveAll(zones.stream()
+                .map(zone -> ConcertZone.builder()
+                        .concert(concert)
+                        .name(zone.name().trim())
+                        .price(zone.price())
+                        .build())
+                .toList());
+        zones.stream().map(ZoneRequest::price).min(Comparator.naturalOrder()).ifPresent(concert::setTicketPrice);
     }
 
     @Override
@@ -110,6 +153,17 @@ public class ConcertServiceImpl implements ConcertService {
             spec = spec.and(ConcertSpecifications.upcoming(upcoming));
         }
         return PageResponse.from(concertRepository.findAll(spec, pageable).map(this::toResponse));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<ConcertReviewResponse> findReviews(Long concertId, Pageable pageable) {
+        if (!concertRepository.existsById(concertId)) {
+            throw new ResourceNotFoundException("Concierto no encontrado con id: " + concertId);
+        }
+        return PageResponse.from(reviewRepository.findByConcert_Id(concertId, pageable)
+                .map(review -> new ConcertReviewResponse(review.getId(), review.getUser().getName(),
+                        review.getRating(), review.getComment(), review.getCreatedAt())));
     }
 
     @Override
@@ -146,12 +200,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     private ConcertResponse toResponse(Concert concert) {
-        Artist artist = concert.getArtist();
-        Venue venue = concert.getVenue();
-        return new ConcertResponse(concert.getId(), concert.getTitle(), concert.getDate(),
-                concert.getTicketPrice(), concert.getImageUrl(),
-                artist.getId(), artist.getName(), venue.getId(), venue.getName(),
-                venue.getCity(), venue.getCountry());
+        return ConcertResponse.from(concert);
     }
 
     private ConcertDetailResponse toDetailResponse(Concert concert) {
@@ -162,7 +211,11 @@ public class ConcertServiceImpl implements ConcertService {
                 new ArtistResponse(artist.getId(), artist.getName(), artist.getCountry(),
                         artist.getDescription(), artist.getImageUrl(), toGenreResponses(artist)),
                 new VenueResponse(venue.getId(), venue.getName(), venue.getCity(), venue.getCountry(),
-                        venue.getAddress(), venue.getCapacity()));
+                        venue.getAddress(), venue.getCapacity()),
+                zoneRepository.findByConcert_IdOrderByPriceAsc(concert.getId()).stream()
+                        .map(zone -> new ZoneResponse(zone.getId(), zone.getName(), zone.getPrice()))
+                        .toList(),
+                concert.getTicketUrl(), concert.isDemo());
     }
 
     private List<GenreResponse> toGenreResponses(Artist artist) {

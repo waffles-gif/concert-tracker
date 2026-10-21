@@ -1,46 +1,60 @@
 package com.concerttracker.backend.service;
 
-import com.concerttracker.backend.dto.response.FollowedArtistResponse;
+import com.concerttracker.backend.dto.request.UserUpdateRequest;
+import com.concerttracker.backend.dto.response.ConcertResponse;
+import com.concerttracker.backend.dto.response.FavoriteConcertResponse;
+import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.UserResponse;
-import com.concerttracker.backend.entity.Artist;
 import com.concerttracker.backend.entity.User;
 import com.concerttracker.backend.exception.ResourceNotFoundException;
-import com.concerttracker.backend.repository.FollowRepository;
+import com.concerttracker.backend.repository.FavoriteConcertRepository;
 import com.concerttracker.backend.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final FollowRepository followRepository;
+    private final FavoriteConcertRepository favoriteConcertRepository;
 
-    public UserServiceImpl(UserRepository userRepository, FollowRepository followRepository) {
+    public UserServiceImpl(UserRepository userRepository, FavoriteConcertRepository favoriteConcertRepository) {
         this.userRepository = userRepository;
-        this.followRepository = followRepository;
+        this.favoriteConcertRepository = favoriteConcertRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserResponse getProfile(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe un usuario con id " + userId));
-        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole().name(),
-                user.getCountry(), user.getCity(), user.getCreatedAt());
+        return UserResponse.from(findUser(userId));
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateProfile(Long userId, UserUpdateRequest request) {
+        User user = findUser(userId);
+        user.setName(request.name().trim());
+        user.setCountry(blankToNull(request.country()));
+        user.setCity(blankToNull(request.city()));
+        user.setBio(blankToNull(request.bio()));
+        return UserResponse.from(userRepository.save(user));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<FollowedArtistResponse> getFollowedArtists(Long userId) {
-        return followRepository.findByUser_IdOrderByCreatedAtDesc(userId).stream()
-                .map(follow -> {
-                    Artist artist = follow.getArtist();
-                    return new FollowedArtistResponse(artist.getId(), artist.getName(), artist.getCountry(),
-                            artist.getImageUrl(), follow.getCreatedAt());
-                })
-                .toList();
+    public PageResponse<FavoriteConcertResponse> getFavoriteConcerts(Long userId, Pageable pageable) {
+        return PageResponse.from(favoriteConcertRepository.findByUser_Id(userId, pageable)
+                .map(favorite -> new FavoriteConcertResponse(favorite.getCreatedAt(),
+                        ConcertResponse.from(favorite.getConcert()))));
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe un usuario con id " + userId));
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
     }
 }

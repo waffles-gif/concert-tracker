@@ -1,0 +1,44 @@
+[
+  {
+    "title": "BTS en Lima - Día 1",
+    "artist": "BTS",
+    "artistCountry": "Corea del Sur",
+    "artistDescription": "Grupo surcoreano de K-pop.",
+    "genres": ["Pop"],
+    "venue": "Estadio San Marcos",
+    "date": "2026-10-07T20:00:00",
+    "source": "Agenda de conciertos Lima 2026 (lacamara.pe): 7, 9 y 10 de octubre en el Estadio San Marcos, entradas agotadas. La hora es aproximada."
+  },
+  {
+    "title": "BTS en Lima - Día 2",
+    "artist": "BTS",
+    "venue": "Estadio San Marcos",
+    "date": "2026-10-09T20:00:00",
+    "source": "lacamara.pe"
+  },
+  {
+    "title": "BTS en Lima - Día 3",
+    "artist": "BTS",
+    "venue": "Estadio San Marcos",
+    "date": "2026-10-10T20:00:00",
+    "source": "lacamara.pe"
+  },
+  {
+    "title": "Duncan Dhu - DD40 Tour",
+    "artist": "Duncan Dhu",
+    "artistCountry": "España",
+    "artistDescription": "Grupo español de pop rock.",
+    "genres": ["Rock", "Pop"],
+    "venue": "Anfiteatro del Parque de la Exposición",
+    "date": "2026-09-10T20:00:00",
+    "source": "Agenda de conciertos Lima 2026 (lacamara.pe): 10 de septiembre en el Anfiteatro del Parque de la Exposición. La hora es aproximada."
+  },
+  {
+    "title": "Lara Campos en Lima",
+    "artist": "Lara Campos",
+    "artistCountry": "Perú",
+    "venue": "Arena 1",
+    "date": "2026-08-02T20:00:00",
+    "source": "Songkick: domingo 2 de agosto de 2026 en Arena 1 Costa Verde. La hora es aproximada."
+  }
+]

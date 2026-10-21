@@ -6,8 +6,10 @@ import PrivateRoute from '../components/PrivateRoute'
 // Cada página se descarga solo cuando se visita (code splitting).
 const HomePage = lazy(() => import('../pages/HomePage'))
 const ConcertsPage = lazy(() => import('../pages/ConcertsPage'))
+const ConcertDetailPage = lazy(() => import('../pages/ConcertDetailPage'))
 const LoginPage = lazy(() => import('../pages/LoginPage'))
 const RegisterPage = lazy(() => import('../pages/RegisterPage'))
+const MyConcertsPage = lazy(() => import('../pages/MyConcertsPage'))
 const ProfilePage = lazy(() => import('../pages/ProfilePage'))
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
 
@@ -17,10 +19,12 @@ export default function AppRoutes() {
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="conciertos" element={<ConcertsPage />} />
+        <Route path="conciertos/:id" element={<ConcertDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 
         <Route element={<PrivateRoute />}>
+          <Route path="mis-conciertos" element={<MyConcertsPage />} />
           <Route path="perfil" element={<ProfilePage />} />
         </Route>
 

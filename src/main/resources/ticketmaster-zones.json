@@ -1,0 +1,43 @@
+[
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FSjJ",
+    "title": "Omar Courtz (Arena 1, 28 de noviembre de 2026)",
+    "note": "Fuente: flyer oficial de venta en ticketmaster.pe. Precios regulares en soles, con la comisión de Ticketmaster incluida. Con BBVA (25% de descuento): Campo A S/ 294 y Campo B S/ 174.",
+    "zones": [
+      { "name": "Campo B", "price": 222.30 },
+      { "name": "Campo A", "price": 375.60 }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17Fg_o",
+    "title": "Foo Fighters (Estadio San Marcos, 3 de marzo de 2027)",
+    "note": "Fuente: tabla de precios de BBVA Perú (bbva.pe) y RPP, agosto de 2026. Precio regular. Con preventa BBVA: Cancha 1 S/ 350, Cancha 2 y Tribuna Norte S/ 180, Oriente y Occidente S/ 410. VERIFICAR en ticketmaster.pe.",
+    "zones": [
+      { "name": "Cancha 2 y Tribuna Norte", "price": 207.00 },
+      { "name": "Cancha 1", "price": 402.50 },
+      { "name": "Oriente y Occidente", "price": 471.50 }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17avCZ",
+    "title": "Martin Garrix (Arena Monumental, 7 de diciembre de 2026)",
+    "note": "Fuente: Rio Times (septiembre de 2026). Precio regular; la preventa 1 (hasta el 2 de noviembre) cuesta General S/ 135, VIP S/ 236.30 y Full Experience S/ 421.90. Los precios suben por fases. VERIFICAR en ticketmaster.pe.",
+    "zones": [
+      { "name": "General", "price": 180.00 },
+      { "name": "VIP", "price": 315.00 },
+      { "name": "Garrix Full Experience", "price": 562.50 }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17kej_",
+    "title": "Robbie Williams (12 de diciembre de 2026)",
+    "note": "Fuente: KCH Comunicación (octubre de 2026). Precio de venta regular en el Estadio San Marcos, a donde se trasladó el show desde Arena 1 Park; Ticketmaster todavía lista el recinto anterior. VERIFICAR recinto y precios en ticketmaster.pe.",
+    "zones": [
+      { "name": "Norte", "price": 185.00 },
+      { "name": "Oriente", "price": 371.00 },
+      { "name": "Occidente 2", "price": 371.00 },
+      { "name": "Occidente 1", "price": 545.00 },
+      { "name": "Occidente Central", "price": 585.00 }
+    ]
+  }
+]

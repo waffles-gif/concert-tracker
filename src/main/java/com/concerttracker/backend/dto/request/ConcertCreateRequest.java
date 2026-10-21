@@ -1,11 +1,13 @@
 package com.concerttracker.backend.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ConcertCreateRequest {
 
@@ -27,7 +29,19 @@ public class ConcertCreateRequest {
     @NotNull(message = "El venue es obligatorio")
     private Long venueId;
 
+    // Opcional. Si se envía, ticketPrice pasa a ser el precio de la zona más barata.
+    @Valid
+    private List<ZoneRequest> zones;
+
     public ConcertCreateRequest() {
+    }
+
+    public List<ZoneRequest> getZones() {
+        return zones;
+    }
+
+    public void setZones(List<ZoneRequest> zones) {
+        this.zones = zones;
     }
 
     public String getTitle() {

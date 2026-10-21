@@ -9,6 +9,7 @@ import { useDebounce } from '../hooks/useDebounce'
 
 const DEFAULT_SORT = 'date,asc'
 const DEFAULT_SIZE = 10
+const DEFAULT_WHEN = 'true'
 
 const SORT_OPTIONS = [
   { value: 'date,asc', label: 'Fecha: más próximos primero' },
@@ -35,7 +36,8 @@ export default function ConcertsPage() {
     country: searchParams.get('country') ?? '',
     city: searchParams.get('city') ?? '',
   }
-  const upcoming = searchParams.get('upcoming') ?? ''
+  // Por defecto se muestran los próximos conciertos; "all" = todos (sin filtro de fecha)
+  const upcoming = searchParams.get('upcoming') ?? DEFAULT_WHEN
   const sort = searchParams.get('sort') ?? DEFAULT_SORT
   const page = positiveInt(searchParams.get('page'), 1)
   const size = positiveInt(searchParams.get('size'), DEFAULT_SIZE)
@@ -69,13 +71,13 @@ export default function ConcertsPage() {
     artist: urlText.artist || undefined,
     country: urlText.country || undefined,
     city: urlText.city || undefined,
-    upcoming: upcoming || undefined,
+    upcoming: upcoming === 'all' ? undefined : upcoming,
     sort,
     page: page - 1,
     size,
   })
 
-  const hasFilters = Boolean(urlText.artist || urlText.country || urlText.city || upcoming)
+  const hasFilters = Boolean(urlText.artist || urlText.country || urlText.city || upcoming !== DEFAULT_WHEN)
 
   const clearFilters = () => {
     setText({ artist: '', country: '', city: '' })
@@ -129,10 +131,14 @@ export default function ConcertsPage() {
 
         <label>
           <span className="sr-only">Cuándo</span>
-          <select value={upcoming} onChange={(e) => updateParams({ upcoming: e.target.value })} className={inputClass}>
-            <option value="">Todos</option>
+          <select
+            value={upcoming}
+            onChange={(e) => updateParams({ upcoming: e.target.value === DEFAULT_WHEN ? '' : e.target.value })}
+            className={inputClass}
+          >
             <option value="true">Próximos</option>
             <option value="false">Ya pasaron</option>
+            <option value="all">Todos</option>
           </select>
         </label>
 
