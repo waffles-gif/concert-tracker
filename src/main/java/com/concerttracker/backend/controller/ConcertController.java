@@ -4,12 +4,10 @@ import com.concerttracker.backend.dto.request.ConcertCreateRequest;
 import com.concerttracker.backend.dto.request.ConcertUpdateRequest;
 import com.concerttracker.backend.dto.response.ConcertDetailResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
-import com.concerttracker.backend.dto.response.ConcertReviewResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.service.ConcertService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -57,13 +55,6 @@ public class ConcertController {
     @GetMapping("/{id}")
     public ResponseEntity<ConcertDetailResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(concertService.findById(id));
-    }
-
-    @GetMapping("/{id}/reviews")
-    public ResponseEntity<PageResponse<ConcertReviewResponse>> findReviews(
-            @PathVariable Long id,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(concertService.findReviews(id, pageable));
     }
 
     @PostMapping

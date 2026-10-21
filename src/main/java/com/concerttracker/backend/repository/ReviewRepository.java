@@ -20,9 +20,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByConcert_Id(Long concertId);
 
-    // Trae el usuario junto con la reseña para no hacer una consulta extra por cada fila
-    @EntityGraph(attributePaths = "user")
+    // Trae usuario, concierto y artista junto con la reseña para no hacer una consulta extra por cada fila
+    @EntityGraph(attributePaths = {"user", "concert", "concert.artist"})
     Page<Review> findByConcert_Id(Long concertId, Pageable pageable);
+
+    // Feed de reseñas recientes (GET /api/v1/reviews/recent), con todo lo que necesita ReviewResponse
+    @EntityGraph(attributePaths = {"user", "concert", "concert.artist"})
+    Page<Review> findAllBy(Pageable pageable);
 
     List<Review> findByUser_Id(Long userId);
 
