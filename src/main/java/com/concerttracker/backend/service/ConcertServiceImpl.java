@@ -6,7 +6,6 @@ import com.concerttracker.backend.dto.request.ZoneRequest;
 import com.concerttracker.backend.dto.response.ArtistResponse;
 import com.concerttracker.backend.dto.response.ConcertDetailResponse;
 import com.concerttracker.backend.dto.response.ConcertResponse;
-import com.concerttracker.backend.dto.response.ConcertReviewResponse;
 import com.concerttracker.backend.dto.response.GenreResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.VenueResponse;
@@ -22,7 +21,6 @@ import com.concerttracker.backend.repository.ArtistRepository;
 import com.concerttracker.backend.repository.ConcertRepository;
 import com.concerttracker.backend.repository.ConcertZoneRepository;
 import com.concerttracker.backend.repository.ConcertSpecifications;
-import com.concerttracker.backend.repository.ReviewRepository;
 import com.concerttracker.backend.repository.VenueRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -42,20 +40,17 @@ public class ConcertServiceImpl implements ConcertService {
     private final ConcertRepository concertRepository;
     private final ArtistRepository artistRepository;
     private final VenueRepository venueRepository;
-    private final ReviewRepository reviewRepository;
     private final ConcertZoneRepository zoneRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public ConcertServiceImpl(ConcertRepository concertRepository,
                               ArtistRepository artistRepository,
                               VenueRepository venueRepository,
-                              ReviewRepository reviewRepository,
                               ConcertZoneRepository zoneRepository,
                               ApplicationEventPublisher eventPublisher) {
         this.concertRepository = concertRepository;
         this.artistRepository = artistRepository;
         this.venueRepository = venueRepository;
-        this.reviewRepository = reviewRepository;
         this.zoneRepository = zoneRepository;
         this.eventPublisher = eventPublisher;
     }
@@ -153,17 +148,6 @@ public class ConcertServiceImpl implements ConcertService {
             spec = spec.and(ConcertSpecifications.upcoming(upcoming));
         }
         return PageResponse.from(concertRepository.findAll(spec, pageable).map(this::toResponse));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PageResponse<ConcertReviewResponse> findReviews(Long concertId, Pageable pageable) {
-        if (!concertRepository.existsById(concertId)) {
-            throw new ResourceNotFoundException("Concierto no encontrado con id: " + concertId);
-        }
-        return PageResponse.from(reviewRepository.findByConcert_Id(concertId, pageable)
-                .map(review -> new ConcertReviewResponse(review.getId(), review.getUser().getName(),
-                        review.getRating(), review.getComment(), review.getCreatedAt())));
     }
 
     @Override
