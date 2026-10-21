@@ -2,6 +2,7 @@ package com.concerttracker.backend.controller;
 
 import com.concerttracker.backend.dto.request.UserUpdateRequest;
 import com.concerttracker.backend.dto.response.FavoriteConcertResponse;
+import com.concerttracker.backend.dto.response.FollowedArtistResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.UserResponse;
 import com.concerttracker.backend.security.SecurityUtils;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Perfil del usuario logueado. Todas las rutas requieren token.
@@ -47,5 +50,11 @@ public class UserController {
     public ResponseEntity<PageResponse<FavoriteConcertResponse>> getFavoriteConcerts(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(userService.getFavoriteConcerts(securityUtils.getCurrentUserId(), pageable));
+    }
+
+    // Artistas que sigue el usuario, del follow más reciente al más antiguo (lo usa "Mi perfil" en mobile)
+    @GetMapping("/follows")
+    public ResponseEntity<List<FollowedArtistResponse>> getFollowedArtists() {
+        return ResponseEntity.ok(userService.getFollowedArtists(securityUtils.getCurrentUserId()));
     }
 }

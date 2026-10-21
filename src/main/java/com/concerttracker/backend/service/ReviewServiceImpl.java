@@ -4,8 +4,6 @@ import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.ReviewResponse;
 import com.concerttracker.backend.entity.Concert;
 import com.concerttracker.backend.entity.Review;
-import com.concerttracker.backend.exception.ResourceNotFoundException;
-import com.concerttracker.backend.repository.ConcertRepository;
 import com.concerttracker.backend.repository.ReviewRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,20 +17,9 @@ public class ReviewServiceImpl implements ReviewService {
     static final int MAX_RECENT_SIZE = 50;
 
     private final ReviewRepository reviewRepository;
-    private final ConcertRepository concertRepository;
 
-    public ReviewServiceImpl(ReviewRepository reviewRepository, ConcertRepository concertRepository) {
+    public ReviewServiceImpl(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
-        this.concertRepository = concertRepository;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PageResponse<ReviewResponse> findByConcert(Long concertId, Pageable pageable) {
-        if (!concertRepository.existsById(concertId)) {
-            throw new ResourceNotFoundException("No existe un concierto con id " + concertId);
-        }
-        return PageResponse.from(reviewRepository.findByConcert_Id(concertId, pageable).map(this::toResponse));
     }
 
     @Override
