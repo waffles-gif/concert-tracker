@@ -7,4 +7,8 @@ export const concertService = {
 
   // GET /concerts/{id} -> detalle con artista y venue
   findById: (id, signal) => api.get(`/concerts/${id}`, { signal }).then((res) => res.data),
+
+  // GET /concerts/{id}/reviews -> paginado; cada reseña trae { id, userName, rating, comment, createdAt }
+  reviews: (id, params, signal) =>
+    api.get(`/concerts/${id}/reviews`, { params, signal }).then((res) => res.data),
 }
