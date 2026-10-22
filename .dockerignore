@@ -1,0 +1,11 @@
+# Solo se necesitan pom.xml y src/ para construir el backend
+.git
+.idea
+target
+web
+mobile
+node_modules
+*.iml
+.env
+**/application-local.properties
+postman_collection.json
