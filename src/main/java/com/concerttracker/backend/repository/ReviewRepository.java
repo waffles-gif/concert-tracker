@@ -30,10 +30,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByUser_Id(Long userId);
 
-    // Feed de reseñas recientes de todos los conciertos (trae usuario, concierto y artista en la misma consulta)
-    @EntityGraph(attributePaths = {"user", "concert", "concert.artist"})
-    Page<Review> findAllBy(Pageable pageable);
-
     // Ids de los conciertos (dentro de `concertIds`) que el usuario ya reseñó
     @Query("select r.concert.id from Review r where r.user.id = :userId and r.concert.id in :concertIds")
     List<Long> findReviewedConcertIds(@Param("userId") Long userId, @Param("concertIds") Collection<Long> concertIds);
