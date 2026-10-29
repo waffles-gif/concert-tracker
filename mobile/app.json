@@ -14,7 +14,9 @@
       "package": "pe.edu.utec.concerttracker"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-secure-store",
+      "expo-status-bar"
     ]
   }
 }
