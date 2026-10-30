@@ -1,26 +1,48 @@
 import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import ConcertCard from '../components/ConcertCard'
 import LoadingScreen from '../components/LoadingScreen'
 import StateView from '../components/StateView'
 import { useConcerts } from '../hooks/useConcerts'
+import { useCurrentCity } from '../hooks/useCurrentCity'
 import { useDebounce } from '../hooks/useDebounce'
 import { colors, radius, spacing } from '../theme'
 
 export default function ConcertsScreen({ navigation }) {
   const [search, setSearch] = useState('')
   const [onlyUpcoming, setOnlyUpcoming] = useState(true)
+  // Ciudad sacada del GPS con "Cerca de mí"; null cuando el filtro está apagado.
+  const [nearCity, setNearCity] = useState(null)
   const artist = useDebounce(search.trim())
+  const { locating, locate } = useCurrentCity()
 
   const { items, totalElements, loading, loadingMore, refreshing, error, hasMore, loadMore, refresh, retry } =
     useConcerts({
       artist: artist || undefined,
       upcoming: onlyUpcoming || undefined,
+      city: nearCity || undefined,
       sort: 'date,asc',
     })
 
-  const hasFilters = Boolean(artist) || onlyUpcoming
+  const hasFilters = Boolean(artist) || onlyUpcoming || Boolean(nearCity)
+
+  const toggleNearMe = async () => {
+    if (nearCity) {
+      setNearCity(null)
+      return
+    }
+    try {
+      setNearCity(await locate())
+    } catch (err) {
+      Toast.show({ type: 'error', text1: 'Cerca de mí', text2: err.message })
+    }
+  }
+
+  let emptyMessage = 'Aún no hay conciertos.'
+  if (nearCity) emptyMessage = `No encontramos conciertos en ${nearCity}. Prueba quitando los filtros.`
+  else if (hasFilters) emptyMessage = 'Prueba con otro artista o quita el filtro de próximos.'
 
   const header = (
     <View style={styles.header}>
@@ -40,14 +62,33 @@ export default function ConcertsScreen({ navigation }) {
         />
       </View>
       <View style={styles.chips}>
-        <Pressable
-          onPress={() => setOnlyUpcoming((value) => !value)}
-          style={[styles.chip, onlyUpcoming && styles.chipActive]}
-          accessibilityRole="switch"
-          accessibilityState={{ checked: onlyUpcoming }}
-        >
-          <Text style={[styles.chipText, onlyUpcoming && styles.chipTextActive]}>Solo próximos</Text>
-        </Pressable>
+        <View style={styles.chipGroup}>
+          <Pressable
+            onPress={() => setOnlyUpcoming((value) => !value)}
+            style={[styles.chip, onlyUpcoming && styles.chipActive]}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: onlyUpcoming }}
+          >
+            <Text style={[styles.chipText, onlyUpcoming && styles.chipTextActive]}>Solo próximos</Text>
+          </Pressable>
+          <Pressable
+            onPress={toggleNearMe}
+            disabled={locating}
+            style={[styles.chip, styles.chipRow, nearCity && styles.chipActive]}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: Boolean(nearCity), busy: locating }}
+            accessibilityLabel="Conciertos cerca de mí"
+          >
+            {locating ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <Ionicons name="location" size={14} color={nearCity ? '#fff' : colors.primary} />
+            )}
+            <Text style={[styles.chipText, nearCity && styles.chipTextActive]} numberOfLines={1}>
+              {nearCity ? `En ${nearCity}` : 'Cerca de mí'}
+            </Text>
+          </Pressable>
+        </View>
         {!loading && !error ? (
           <Text style={styles.count}>
             {totalElements} {totalElements === 1 ? 'concierto' : 'conciertos'}
@@ -74,13 +115,14 @@ export default function ConcertsScreen({ navigation }) {
       <StateView
         icon="musical-notes-outline"
         title="No hay conciertos"
-        message={hasFilters ? 'Prueba con otro artista o quita el filtro de próximos.' : 'Aún no hay conciertos.'}
+        message={emptyMessage}
         actionLabel={hasFilters ? 'Quitar filtros' : undefined}
         onAction={
           hasFilters
             ? () => {
                 setSearch('')
                 setOnlyUpcoming(false)
+                setNearCity(null)
               }
             : undefined
         }
@@ -138,6 +180,8 @@ const styles = StyleSheet.create({
   },
   searchInput: { flex: 1, paddingVertical: spacing.md, paddingLeft: spacing.sm, fontSize: 16, color: colors.text },
   chips: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md },
+  chipGroup: { flexDirection: 'row', gap: spacing.sm, flexShrink: 1 },
+  chipRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexShrink: 1 },
   chip: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,

@@ -3,10 +3,15 @@ import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import { ActivityIndicator, Image, Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import Toast from 'react-native-toast-message'
+import ConcertActions from '../components/ConcertActions'
 import PrimaryButton from '../components/PrimaryButton'
+import ReviewForm from '../components/ReviewForm'
 import ReviewItem from '../components/ReviewItem'
 import StateView from '../components/StateView'
+import WeatherCard from '../components/WeatherCard'
 import { useConcertDetail } from '../hooks/useConcertDetail'
+import { useConcertInteractions } from '../hooks/useConcertInteractions'
+import { useConcertWeather } from '../hooks/useConcertWeather'
 import { colors, radius, spacing } from '../theme'
 import { formatDateTime, formatPrice } from '../utils/format'
 
@@ -51,7 +56,10 @@ export default function ConcertDetailScreen({ route, navigation }) {
     hasMoreReviews,
     loadMoreReviews,
     retryReviews,
+    reloadReviews,
   } = useConcertDetail(preview?.id)
+  const interactions = useConcertInteractions(preview?.id, concert?.artist?.id)
+  const weather = useConcertWeather(concert?.venue, concert?.date)
 
   const title = concert?.title ?? preview?.title
   useEffect(() => {
@@ -90,6 +98,13 @@ export default function ConcertDetailScreen({ route, navigation }) {
   const priceText = zones.length > 0 && concert.ticketPrice != null
     ? `Desde ${formatPrice(concert.ticketPrice)}`
     : formatPrice(concert.ticketPrice)
+  const isPast = new Date(concert.date) < new Date()
+  const canReview = interactions.status?.attendanceStatus === 'YA_FUI' && !interactions.status?.reviewed
+
+  const handleReview = async (review) => {
+    await interactions.submitReview(review)
+    reloadReviews()
+  }
 
   return (
     <ScrollView
@@ -124,6 +139,9 @@ export default function ConcertDetailScreen({ route, navigation }) {
         </InfoRow>
       </View>
 
+      <Text style={styles.sectionTitle}>Clima{venue?.city ? ` en ${venue.city}` : ''}</Text>
+      <WeatherCard weather={weather.weather} loading={weather.loading} error={weather.error} onRetry={weather.retry} />
+
       {zones.length > 0 ? (
         <>
           <Text style={styles.sectionTitle}>Entradas por zona</Text>
@@ -145,6 +163,28 @@ export default function ConcertDetailScreen({ route, navigation }) {
         </View>
       ) : null}
 
+      <Text style={styles.sectionTitle}>Tu asistencia</Text>
+      {interactions.loading && !interactions.status ? <ActivityIndicator color={colors.primary} /> : null}
+      {interactions.error && !interactions.status ? (
+        <View style={styles.inlineError}>
+          <Text style={styles.errorText}>{interactions.error}</Text>
+          <PrimaryButton title="Reintentar" variant="outline" onPress={interactions.retry} />
+        </View>
+      ) : null}
+      {interactions.status ? (
+        <ConcertActions
+          isPast={isPast}
+          attendanceStatus={interactions.status.attendanceStatus}
+          favorite={interactions.status.favorite}
+          following={interactions.following}
+          artistName={artist?.name}
+          busy={interactions.busy}
+          onAttendance={interactions.markAttendance}
+          onToggleFavorite={interactions.toggleFavorite}
+          onToggleFollow={interactions.toggleFollow}
+        />
+      ) : null}
+
       <Text style={styles.sectionTitle}>Artista</Text>
       <View style={styles.card}>
         <Text style={styles.value}>{artist?.name}</Text>
@@ -154,6 +194,7 @@ export default function ConcertDetailScreen({ route, navigation }) {
       </View>
 
       <Text style={styles.sectionTitle}>Reseñas{reviewsTotal ? ` (${reviewsTotal})` : ''}</Text>
+      {canReview ? <ReviewForm onSubmit={handleReview} /> : null}
       {reviews.map((review) => (
         <ReviewItem key={review.id} review={review} />
       ))}
