@@ -97,5 +97,7 @@ export function useConcertDetail(concertId) {
     hasMoreReviews,
     loadMoreReviews,
     retryReviews,
+    // Vuelve a la primera página de reseñas (por ejemplo, después de publicar una).
+    reloadReviews: () => fetchReviews(0),
   }
 }

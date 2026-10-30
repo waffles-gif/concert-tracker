@@ -16,7 +16,13 @@
     "plugins": [
       "expo-font",
       "expo-secure-store",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usamos tu ubicación para mostrarte los conciertos de tu ciudad."
+        }
+      ]
     ]
   }
 }
