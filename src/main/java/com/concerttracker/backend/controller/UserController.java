@@ -4,6 +4,7 @@ import com.concerttracker.backend.dto.request.UserUpdateRequest;
 import com.concerttracker.backend.dto.response.FavoriteConcertResponse;
 import com.concerttracker.backend.dto.response.FollowedArtistResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
+import com.concerttracker.backend.dto.response.ReviewResponse;
 import com.concerttracker.backend.dto.response.UserResponse;
 import com.concerttracker.backend.security.SecurityUtils;
 import com.concerttracker.backend.service.UserService;
@@ -43,6 +44,13 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserResponse> updateProfile(@Valid @RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateProfile(securityUtils.getCurrentUserId(), request));
+    }
+
+    // Reseñas que dejé, paginadas (las más recientes primero)
+    @GetMapping("/reviews")
+    public ResponseEntity<PageResponse<ReviewResponse>> getMyReviews(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(userService.getMyReviews(securityUtils.getCurrentUserId(), pageable));
     }
 
     // Conciertos que el usuario guardó en favoritos, paginados (los agregados más recientemente primero)

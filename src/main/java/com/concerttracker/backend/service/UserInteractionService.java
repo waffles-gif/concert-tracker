@@ -20,7 +20,8 @@ public interface UserInteractionService {
 
     List<AttendanceResponseDto> getUserHistory(Long userId, Attendance.AttendanceStatus statusFilter);
 
-    PageResponse<MyConcertResponse> getMyConcerts(Long userId, Attendance.AttendanceStatus statusFilter, Pageable pageable);
+    PageResponse<MyConcertResponse> getMyConcerts(Long userId, Attendance.AttendanceStatus statusFilter, Boolean upcoming,
+                                                  Pageable pageable);
 
     ConcertInteractionResponse getConcertInteraction(Long userId, Long concertId);
 

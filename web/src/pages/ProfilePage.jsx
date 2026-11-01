@@ -5,6 +5,8 @@ import { useForm, useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import ConcertCard from '../components/ConcertCard'
+import FollowedArtists from '../components/FollowedArtists'
+import MyReviews from '../components/MyReviews'
 import FormField from '../components/FormField'
 import Pagination from '../components/Pagination'
 import Spinner from '../components/Spinner'
@@ -291,6 +293,8 @@ export default function ProfilePage() {
       </section>
 
       <FavoriteConcerts />
+      <FollowedArtists />
+      <MyReviews />
     </div>
   )
 }

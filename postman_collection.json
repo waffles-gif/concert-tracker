@@ -2939,10 +2939,16 @@
                 {
                   "key": "sort",
                   "value": "concert.date,asc"
+                },
+                {
+                  "key": "upcoming",
+                  "value": "true",
+                  "description": "Opcional: true = próximos, false = ya ocurridos",
+                  "disabled": true
                 }
               ]
             },
-            "description": "Historial personal paginado, con los datos del concierto dentro de cada elemento. Requiere token.\n\nQuery params (todos opcionales):\n- `status`: `VOY_A_IR` o `YA_FUI`\n- `page` (desde 0), `size` (máximo 100)\n- `sort`: por defecto `concert.date,asc`; usa `concert.date,desc` para ver los más recientes primero\n\nCada elemento trae `attendanceId`, `status`, `markedAt`, `reviewed` (si ya dejó reseña) y `concert`."
+            "description": "Historial personal paginado, con los datos del concierto dentro de cada elemento. Requiere token.\n\nQuery params (todos opcionales):\n- `status`: `VOY_A_IR` o `YA_FUI`\n- `upcoming`: `true` = solo conciertos que aún no ocurren, `false` = solo los que ya ocurrieron (útil para el dashboard)\n- `page` (desde 0), `size` (máximo 100)\n- `sort`: por defecto `concert.date,asc`; usa `concert.date,desc` para ver los más recientes primero\n\nCada elemento trae `attendanceId`, `status`, `markedAt`, `reviewed` (si ya dejó reseña) y `concert`."
           },
           "response": [
             {
@@ -4482,6 +4488,99 @@
                 }
               ],
               "body": "{\n  \"content\": [\n    {\n      \"addedAt\": \"2026-10-21T12:30:57.05829\",\n      \"concert\": {\n        \"id\": 3,\n        \"title\": \"Bad Bunny en Lima\",\n        \"date\": \"2026-10-12T20:00:00\",\n        \"ticketPrice\": 180.0,\n        \"imageUrl\": null,\n        \"artistId\": 2,\n        \"artistName\": \"Bad Bunny\",\n        \"venueId\": 2,\n        \"venueName\": \"Estadio Nacional\",\n        \"city\": \"Lima\",\n        \"country\": \"Perú\"\n      }\n    }\n  ],\n  \"page\": 0,\n  \"size\": 12,\n  \"totalElements\": 1,\n  \"totalPages\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mis reseñas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/me/reviews?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Reseñas que dejó el usuario logueado, paginadas (`page` desde 0, `size` máximo 100), las más recientes primero (`sort=createdAt,desc` por defecto). Cada elemento trae la reseña y el concierto. Requiere token."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/users/me/reviews?page=0&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "me",
+                    "reviews"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"content\": [\n    {\n      \"id\": 98,\n      \"rating\": 5,\n      \"comment\": \"Superó mis expectativas, volvería sin dudarlo.\",\n      \"createdAt\": \"2026-10-21T13:29:27.62541\",\n      \"userId\": 9,\n      \"userName\": \"Usuario Demo\",\n      \"concertId\": 76,\n      \"concertTitle\": \"BTS en Lima - Día 1\",\n      \"artistName\": \"BTS\"\n    },\n    {\n      \"id\": 97,\n      \"rating\": 4,\n      \"comment\": \"Cantó todos sus clásicos y el público no paró de bailar.\",\n      \"createdAt\": \"2026-10-21T13:29:27.621984\",\n      \"userId\": 9,\n      \"userName\": \"Usuario Demo\",\n      \"concertId\": 77,\n      \"concertTitle\": \"BTS en Lima - Día 2\",\n      \"artistName\": \"BTS\"\n    },\n    {\n      \"id\": 96,\n      \"rating\": 5,\n      \"comment\": \"Una noche increíble, el sonido y la producción estuvieron de lujo.\",\n      \"createdAt\": \"2026-10-21T13:29:27.61756\",\n      \"userId\": 9,\n      \"userName\": \"Usuario Demo\",\n      \"concertId\": 78,\n      \"concertTitle\": \"BTS en Lima - Día 3\",\n      \"artistName\": \"BTS\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"totalElements\": 3,\n  \"totalPages\": 1\n}"
             }
           ]
         }
