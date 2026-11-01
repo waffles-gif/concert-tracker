@@ -13,6 +13,10 @@ export const interactionService = {
   addFavorite: (concertId) => api.put(`/user-interactions/favorites/${concertId}`).then((res) => res.data),
   removeFavorite: (concertId) => api.delete(`/user-interactions/favorites/${concertId}`).then((res) => res.data),
 
+  // Seguir / dejar de seguir a un artista
+  followArtist: (artistId) => api.post('/user-interactions/follow', { artistId }).then((res) => res.data),
+  unfollowArtist: (artistId) => api.delete(`/user-interactions/follow/${artistId}`).then((res) => res.data),
+
   // review: { concertId, rating (1-5), comment }
   createReview: (review) => api.post('/user-interactions/reviews', review).then((res) => res.data),
 

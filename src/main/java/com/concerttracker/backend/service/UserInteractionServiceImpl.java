@@ -34,6 +34,7 @@ import com.concerttracker.backend.repository.UserRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,10 +132,18 @@ public class UserInteractionServiceImpl implements UserInteractionService {
     @Override
     @Transactional(readOnly = true)
     public PageResponse<MyConcertResponse> getMyConcerts(Long userId, Attendance.AttendanceStatus statusFilter,
-                                                         Pageable pageable) {
-        Page<Attendance> page = (statusFilter != null)
-                ? attendanceRepository.findByUser_IdAndStatus(userId, statusFilter, pageable)
-                : attendanceRepository.findByUser_Id(userId, pageable);
+                                                         Boolean upcoming, Pageable pageable) {
+        Specification<Attendance> spec = (root, query, cb) -> cb.equal(root.get("user").get("id"), userId);
+        if (statusFilter != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), statusFilter));
+        }
+        if (upcoming != null) {
+            LocalDateTime now = LocalDateTime.now();
+            spec = spec.and((root, query, cb) -> upcoming
+                    ? cb.greaterThanOrEqualTo(root.get("concert").get("date"), now)
+                    : cb.lessThan(root.get("concert").get("date"), now));
+        }
+        Page<Attendance> page = attendanceRepository.findAll(spec, pageable);
 
         List<Long> concertIds = page.getContent().stream().map(Attendance::getConcertId).toList();
         Set<Long> reviewed = concertIds.isEmpty()

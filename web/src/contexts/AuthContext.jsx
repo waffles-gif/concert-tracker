@@ -3,6 +3,8 @@ import { createContext, useCallback, useEffect, useMemo, useRef, useState } from
 import { setAuthFailureHandler } from '../services/api'
 import { authService } from '../services/authService'
 import { tokenStore } from '../services/tokenStore'
+import { userService } from '../services/userService'
+import { MIN_FOLLOWS } from '../utils/onboarding'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null)
@@ -56,18 +58,46 @@ export function AuthProvider({ children }) {
   // Para refrescar los datos del usuario en pantalla después de editar su perfil
   const updateUser = useCallback((nextUser) => setUser(nextUser), [])
 
+  // Onboarding: un usuario (que no sea admin) debe seguir al menos MIN_FOLLOWS artistas.
+  // `follows.userId` evita usar el conteo de otro usuario si se cambia de sesión.
+  const userId = user?.id
+  const isAdmin = user?.role === 'ADMIN'
+  const [follows, setFollows] = useState({ userId: null, count: null })
+
+  useEffect(() => {
+    if (!userId) return undefined
+    let cancelled = false
+    userService
+      .follows()
+      .then((list) => !cancelled && setFollows({ userId, count: list.length }))
+      // Si no se puede consultar, no se bloquea al usuario
+      .catch(() => !cancelled && setFollows({ userId, count: MIN_FOLLOWS }))
+    return () => {
+      cancelled = true
+    }
+  }, [userId])
+
+  const followCount = follows.userId === userId ? follows.count : null
+  const updateFollowCount = useCallback((count) => setFollows((prev) => ({ ...prev, count })), [])
+
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      isAdmin: user?.role === 'ADMIN',
+      isAdmin,
       initializing,
       login,
       register,
       logout,
       updateUser,
+      followCount,
+      updateFollowCount,
+      // Hay que llevarlo a /onboarding hasta que siga MIN_FOLLOWS artistas
+      needsOnboarding: Boolean(user) && !isAdmin && followCount !== null && followCount < MIN_FOLLOWS,
+      // Todavía no sabemos cuántos sigue
+      checkingOnboarding: Boolean(user) && !isAdmin && followCount === null,
     }),
-    [user, initializing, login, register, logout, updateUser],
+    [user, isAdmin, initializing, login, register, logout, updateUser, followCount, updateFollowCount],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -8,7 +8,7 @@ const linkClass = ({ isActive }) =>
   }`
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, logout, needsOnboarding } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -24,17 +24,29 @@ export default function Navbar() {
         </Link>
 
         <nav aria-label="Principal" className="flex flex-wrap items-center gap-1">
-          <NavLink to="/conciertos" className={linkClass}>
-            Conciertos
-          </NavLink>
+          {/* Durante el onboarding obligatorio solo se muestra "Salir" */}
+          {!needsOnboarding && (
+            <>
+              <NavLink to="/conciertos" className={linkClass}>
+                Conciertos
+              </NavLink>
+              <NavLink to="/artistas" className={linkClass}>
+                Artistas
+              </NavLink>
+            </>
+          )}
           {isAuthenticated ? (
             <>
-              <NavLink to="/mis-conciertos" className={linkClass}>
-                Mis conciertos
-              </NavLink>
-              <NavLink to="/perfil" className={linkClass}>
-                {user.name}
-              </NavLink>
+              {!needsOnboarding && (
+                <>
+                  <NavLink to="/mis-conciertos" className={linkClass}>
+                    Mis conciertos
+                  </NavLink>
+                  <NavLink to="/perfil" className={linkClass}>
+                    {user.name}
+                  </NavLink>
+                </>
+              )}
               <button
                 type="button"
                 onClick={handleLogout}

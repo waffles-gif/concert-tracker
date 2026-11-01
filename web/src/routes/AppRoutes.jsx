@@ -7,8 +7,10 @@ import PrivateRoute from '../components/PrivateRoute'
 const HomePage = lazy(() => import('../pages/HomePage'))
 const ConcertsPage = lazy(() => import('../pages/ConcertsPage'))
 const ConcertDetailPage = lazy(() => import('../pages/ConcertDetailPage'))
+const ArtistsPage = lazy(() => import('../pages/ArtistsPage'))
 const LoginPage = lazy(() => import('../pages/LoginPage'))
 const RegisterPage = lazy(() => import('../pages/RegisterPage'))
+const OnboardingPage = lazy(() => import('../pages/OnboardingPage'))
 const MyConcertsPage = lazy(() => import('../pages/MyConcertsPage'))
 const ProfilePage = lazy(() => import('../pages/ProfilePage'))
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
@@ -20,10 +22,12 @@ export default function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="conciertos" element={<ConcertsPage />} />
         <Route path="conciertos/:id" element={<ConcertDetailPage />} />
+        <Route path="artistas" element={<ArtistsPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 
         <Route element={<PrivateRoute />}>
+          <Route path="onboarding" element={<OnboardingPage />} />
           <Route path="mis-conciertos" element={<MyConcertsPage />} />
           <Route path="perfil" element={<ProfilePage />} />
         </Route>

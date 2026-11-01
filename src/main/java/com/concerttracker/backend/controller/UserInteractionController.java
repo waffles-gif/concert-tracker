@@ -51,13 +51,15 @@ public class UserInteractionController {
     }
 
     // Historial personal con los datos del concierto, paginado ("Mis conciertos").
-    // Filtro opcional por estado; se ordena por fecha del concierto (sort=concert.date,asc|desc).
+    // Filtros opcionales: status (VOY_A_IR / YA_FUI) y upcoming (true = conciertos que aún no ocurren,
+    // false = los que ya ocurrieron). Se ordena por fecha del concierto (sort=concert.date,asc|desc).
     @GetMapping("/my-concerts")
     public ResponseEntity<PageResponse<MyConcertResponse>> getMyConcerts(
             @RequestParam(required = false) Attendance.AttendanceStatus status,
+            @RequestParam(required = false) Boolean upcoming,
             @PageableDefault(size = 10, sort = "concert.date") Pageable pageable) {
         Long userId = securityUtils.getCurrentUserId();
-        return ResponseEntity.ok(userInteractionService.getMyConcerts(userId, status, pageable));
+        return ResponseEntity.ok(userInteractionService.getMyConcerts(userId, status, upcoming, pageable));
     }
 
     // Mi estado frente a un concierto: asistencia (o null si no marqué nada) y si ya dejé reseña

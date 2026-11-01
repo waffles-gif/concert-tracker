@@ -5,6 +5,7 @@ import com.concerttracker.backend.entity.Attendance;
 import com.concerttracker.backend.entity.Attendance.AttendanceStatus;
 import com.concerttracker.backend.entity.Concert;
 import com.concerttracker.backend.entity.FavoriteConcert;
+import com.concerttracker.backend.entity.Follow;
 import com.concerttracker.backend.entity.Genre;
 import com.concerttracker.backend.entity.Review;
 import com.concerttracker.backend.entity.User;
@@ -13,6 +14,7 @@ import com.concerttracker.backend.repository.ArtistRepository;
 import com.concerttracker.backend.repository.AttendanceRepository;
 import com.concerttracker.backend.repository.ConcertRepository;
 import com.concerttracker.backend.repository.FavoriteConcertRepository;
+import com.concerttracker.backend.repository.FollowRepository;
 import com.concerttracker.backend.repository.GenreRepository;
 import com.concerttracker.backend.repository.ReviewRepository;
 import com.concerttracker.backend.repository.UserRepository;
@@ -135,6 +137,7 @@ public class DemoDataLoader implements ApplicationRunner {
     private final AttendanceRepository attendanceRepository;
     private final ReviewRepository reviewRepository;
     private final FavoriteConcertRepository favoriteConcertRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
     private final String userPassword;
     private final Resource pastConcertsFile;
@@ -147,6 +150,7 @@ public class DemoDataLoader implements ApplicationRunner {
                           AttendanceRepository attendanceRepository,
                           ReviewRepository reviewRepository,
                           FavoriteConcertRepository favoriteConcertRepository,
+                          FollowRepository followRepository,
                           PasswordEncoder passwordEncoder,
                           @Value("${app.demo-data.user-password}") String userPassword,
                           @Value("classpath:past-concerts.json") Resource pastConcertsFile) {
@@ -158,6 +162,7 @@ public class DemoDataLoader implements ApplicationRunner {
         this.attendanceRepository = attendanceRepository;
         this.reviewRepository = reviewRepository;
         this.favoriteConcertRepository = favoriteConcertRepository;
+        this.followRepository = followRepository;
         this.passwordEncoder = passwordEncoder;
         this.userPassword = userPassword;
         this.pastConcertsFile = pastConcertsFile;
@@ -168,7 +173,7 @@ public class DemoDataLoader implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         Map<String, Artist> artists = loadArtists();
         List<Concert> past = loadPastConcerts(artists);
-        loadActivity(past);
+        loadActivity(past, artists);
         log.info("Datos de ejemplo listos: {} conciertos pasados, usuario demo {}", past.size(), DEMO_EMAIL);
     }
 
@@ -253,7 +258,7 @@ public class DemoDataLoader implements ApplicationRunner {
         }
     }
 
-    private void loadActivity(List<Concert> past) {
+    private void loadActivity(List<Concert> past, Map<String, Artist> artists) {
         LocalDateTime now = LocalDateTime.now();
         List<Concert> pastNewestFirst = past.stream().sorted(Comparator.comparing(Concert::getDate).reversed()).toList();
         // "Voy a ir" y favoritos van a conciertos próximos REALES (importados de Ticketmaster), si ya se sincronizó
@@ -273,6 +278,9 @@ public class DemoDataLoader implements ApplicationRunner {
         for (int i = 0; i < Math.min(4, upcoming.size()); i++) {
             attend(demo, upcoming.get(i), AttendanceStatus.VOY_A_IR);
         }
+        // El onboarding exige seguir al menos 3 artistas: el usuario demo sigue 5 para entrar directo
+        List.of("Bad Bunny", "Karol G", "Coldplay", "Arctic Monkeys", "Shakira")
+                .forEach(name -> follow(demo, artists.get(key(name))));
         // Favoritos del usuario demo: dos conciertos que ya fue y tres próximos
         pastNewestFirst.stream().limit(2).forEach(concert -> favorite(demo, concert));
         upcoming.stream().skip(1).limit(3).forEach(concert -> favorite(demo, concert));
@@ -281,6 +289,10 @@ public class DemoDataLoader implements ApplicationRunner {
         Random random = new Random(42);
         for (int u = 0; u < FANS.size(); u++) {
             User fan = findOrCreateUser(FANS.get(u));
+            for (int a = 0; a < 3; a++) {
+                follow(fan, ARTISTS.stream().skip((u + a * 4) % ARTISTS.size()).findFirst()
+                        .map(seed -> artists.get(key(seed.name()))).orElse(null));
+            }
             for (Concert concert : past) {
                 if (random.nextInt(100) < 75) {
                     attend(fan, concert, AttendanceStatus.YA_FUI);
@@ -312,6 +324,12 @@ public class DemoDataLoader implements ApplicationRunner {
     private void review(User user, Concert concert, int rating, String comment) {
         if (reviewRepository.findByUser_IdAndConcert_Id(user.getId(), concert.getId()).isEmpty()) {
             reviewRepository.save(Review.builder().user(user).concert(concert).rating(rating).comment(comment).build());
+        }
+    }
+
+    private void follow(User user, Artist artist) {
+        if (artist != null && !followRepository.existsByUser_IdAndArtist_Id(user.getId(), artist.getId())) {
+            followRepository.save(Follow.builder().user(user).artist(artist).build());
         }
     }
 

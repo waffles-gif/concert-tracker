@@ -1,6 +1,11 @@
+import { lazy } from 'react'
 import { Link } from 'react-router-dom'
+import Spinner from '../components/Spinner'
+import { useAuth } from '../hooks/useAuth'
 
-export default function HomePage() {
+const DashboardPage = lazy(() => import('./DashboardPage'))
+
+function Landing() {
   return (
     <section className="py-12 text-center">
       <h1 className="text-4xl font-bold tracking-tight">Todos tus conciertos en un solo lugar</h1>
@@ -15,4 +20,12 @@ export default function HomePage() {
       </Link>
     </section>
   )
+}
+
+// Inicio: con sesión es el dashboard personal; sin sesión, la portada
+export default function HomePage() {
+  const { isAuthenticated, initializing } = useAuth()
+
+  if (initializing) return <Spinner />
+  return isAuthenticated ? <DashboardPage /> : <Landing />
 }

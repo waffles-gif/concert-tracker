@@ -2,7 +2,9 @@ package com.concerttracker.backend.controller;
 
 import com.concerttracker.backend.dto.request.UserUpdateRequest;
 import com.concerttracker.backend.dto.response.FavoriteConcertResponse;
+import com.concerttracker.backend.dto.response.FollowedArtistResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
+import com.concerttracker.backend.dto.response.ReviewResponse;
 import com.concerttracker.backend.dto.response.UserResponse;
 import com.concerttracker.backend.security.SecurityUtils;
 import com.concerttracker.backend.service.UserService;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Perfil del usuario logueado. Todas las rutas requieren token.
@@ -40,6 +44,19 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserResponse> updateProfile(@Valid @RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateProfile(securityUtils.getCurrentUserId(), request));
+    }
+
+    // Artistas que sigo, del follow más reciente al más antiguo (lista vacía si no sigo a nadie)
+    @GetMapping("/follows")
+    public ResponseEntity<List<FollowedArtistResponse>> getFollowedArtists() {
+        return ResponseEntity.ok(userService.getFollowedArtists(securityUtils.getCurrentUserId()));
+    }
+
+    // Reseñas que dejé, paginadas (las más recientes primero)
+    @GetMapping("/reviews")
+    public ResponseEntity<PageResponse<ReviewResponse>> getMyReviews(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(userService.getMyReviews(securityUtils.getCurrentUserId(), pageable));
     }
 
     // Conciertos que el usuario guardó en favoritos, paginados (los agregados más recientemente primero)
