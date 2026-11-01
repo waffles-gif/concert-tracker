@@ -171,12 +171,21 @@ public class TicketmasterSyncService {
             if (concert == null) {
                 continue; // el concierto todavía no se importó (o ya no existe en Ticketmaster)
             }
+            // Opcional: enlace de compra para conciertos que no vienen de la API (por ejemplo los "hist:")
+            boolean urlChanged = false;
+            if (data.get("ticketUrl") != null && !Objects.equals(concert.getTicketUrl(), data.get("ticketUrl"))) {
+                concert.setTicketUrl(cut(String.valueOf(data.get("ticketUrl")), 500));
+                urlChanged = true;
+            }
             Map<String, BigDecimal> wanted = new LinkedHashMap<>();
             for (Object zone : (List<?>) data.get("zones")) {
                 Map<?, ?> z = (Map<?, ?>) zone;
                 wanted.put(String.valueOf(z.get("name")), new BigDecimal(String.valueOf(z.get("price"))));
             }
             if (sameZones(concert.getId(), wanted)) {
+                if (urlChanged) {
+                    applied++;
+                }
                 continue;
             }
             zoneRepository.deleteByConcertId(concert.getId());
