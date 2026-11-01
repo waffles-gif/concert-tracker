@@ -46,12 +46,6 @@ public class UserController {
         return ResponseEntity.ok(userService.updateProfile(securityUtils.getCurrentUserId(), request));
     }
 
-    // Artistas que sigo, del follow más reciente al más antiguo (lista vacía si no sigo a nadie)
-    @GetMapping("/follows")
-    public ResponseEntity<List<FollowedArtistResponse>> getFollowedArtists() {
-        return ResponseEntity.ok(userService.getFollowedArtists(securityUtils.getCurrentUserId()));
-    }
-
     // Reseñas que dejé, paginadas (las más recientes primero)
     @GetMapping("/reviews")
     public ResponseEntity<PageResponse<ReviewResponse>> getMyReviews(
@@ -64,5 +58,11 @@ public class UserController {
     public ResponseEntity<PageResponse<FavoriteConcertResponse>> getFavoriteConcerts(
             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(userService.getFavoriteConcerts(securityUtils.getCurrentUserId(), pageable));
+    }
+
+    // Artistas que sigue el usuario, del follow más reciente al más antiguo (lo usa "Mi perfil" en mobile)
+    @GetMapping("/follows")
+    public ResponseEntity<List<FollowedArtistResponse>> getFollowedArtists() {
+        return ResponseEntity.ok(userService.getFollowedArtists(securityUtils.getCurrentUserId()));
     }
 }

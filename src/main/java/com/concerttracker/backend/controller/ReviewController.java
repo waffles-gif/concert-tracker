@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Lectura pública de reseñas. Crear una reseña sigue en
- * POST /api/v1/user-interactions/reviews (requiere token y asistencia YA_FUI).
- * Va en su propio controller para no tocar ConcertController.
+ * Lectura pública de reseñas (detalle de concierto y feed de Actividad reciente).
+ * Crear una reseña sigue en POST /api/v1/user-interactions/reviews (requiere token y asistencia YA_FUI).
  */
 @RestController
 @RequestMapping("/api/v1")

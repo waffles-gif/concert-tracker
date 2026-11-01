@@ -7,6 +7,7 @@ import com.concerttracker.backend.dto.response.FollowedArtistResponse;
 import com.concerttracker.backend.dto.response.PageResponse;
 import com.concerttracker.backend.dto.response.ReviewResponse;
 import com.concerttracker.backend.dto.response.UserResponse;
+import com.concerttracker.backend.entity.Artist;
 import com.concerttracker.backend.entity.User;
 import com.concerttracker.backend.exception.ResourceNotFoundException;
 import com.concerttracker.backend.repository.FavoriteConcertRepository;
@@ -60,13 +61,15 @@ public class UserServiceImpl implements UserService {
                         ConcertResponse.from(favorite.getConcert()))));
     }
 
-    // Artistas que sigue el usuario, del follow más reciente al más antiguo (lista vacía si no sigue a nadie)
     @Override
     @Transactional(readOnly = true)
     public List<FollowedArtistResponse> getFollowedArtists(Long userId) {
         return followRepository.findByUser_IdOrderByCreatedAtDesc(userId).stream()
-                .map(follow -> new FollowedArtistResponse(follow.getArtist().getId(), follow.getArtist().getName(),
-                        follow.getArtist().getCountry(), follow.getArtist().getImageUrl(), follow.getCreatedAt()))
+                .map(follow -> {
+                    Artist artist = follow.getArtist();
+                    return new FollowedArtistResponse(artist.getId(), artist.getName(), artist.getCountry(),
+                            artist.getImageUrl(), follow.getCreatedAt());
+                })
                 .toList();
     }
 
