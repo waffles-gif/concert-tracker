@@ -4,8 +4,14 @@
     "title": "Omar Courtz (Arena 1, 28 de noviembre de 2026)",
     "note": "Fuente: flyer oficial de venta en ticketmaster.pe. Precios regulares en soles, con la comisión de Ticketmaster incluida. Con BBVA (25% de descuento): Campo A S/ 294 y Campo B S/ 174.",
     "zones": [
-      { "name": "Campo B", "price": 222.30 },
-      { "name": "Campo A", "price": 375.60 }
+      {
+        "name": "Campo B",
+        "price": 222.3
+      },
+      {
+        "name": "Campo A",
+        "price": 375.6
+      }
     ]
   },
   {
@@ -13,9 +19,18 @@
     "title": "Foo Fighters (Estadio San Marcos, 3 de marzo de 2027)",
     "note": "Fuente: tabla de precios de BBVA Perú (bbva.pe) y RPP, agosto de 2026. Precio regular. Con preventa BBVA: Cancha 1 S/ 350, Cancha 2 y Tribuna Norte S/ 180, Oriente y Occidente S/ 410. VERIFICAR en ticketmaster.pe.",
     "zones": [
-      { "name": "Cancha 2 y Tribuna Norte", "price": 207.00 },
-      { "name": "Cancha 1", "price": 402.50 },
-      { "name": "Oriente y Occidente", "price": 471.50 }
+      {
+        "name": "Cancha 2 y Tribuna Norte",
+        "price": 207.0
+      },
+      {
+        "name": "Cancha 1",
+        "price": 402.5
+      },
+      {
+        "name": "Oriente y Occidente",
+        "price": 471.5
+      }
     ]
   },
   {
@@ -23,9 +38,18 @@
     "title": "Martin Garrix (Arena Monumental, 7 de diciembre de 2026)",
     "note": "Fuente: Rio Times (septiembre de 2026). Precio regular; la preventa 1 (hasta el 2 de noviembre) cuesta General S/ 135, VIP S/ 236.30 y Full Experience S/ 421.90. Los precios suben por fases. VERIFICAR en ticketmaster.pe.",
     "zones": [
-      { "name": "General", "price": 180.00 },
-      { "name": "VIP", "price": 315.00 },
-      { "name": "Garrix Full Experience", "price": 562.50 }
+      {
+        "name": "General",
+        "price": 180.0
+      },
+      {
+        "name": "VIP",
+        "price": 315.0
+      },
+      {
+        "name": "Garrix Full Experience",
+        "price": 562.5
+      }
     ]
   },
   {
@@ -33,11 +57,496 @@
     "title": "Robbie Williams (12 de diciembre de 2026)",
     "note": "Fuente: KCH Comunicación (octubre de 2026). Precio de venta regular en el Estadio San Marcos, a donde se trasladó el show desde Arena 1 Park; Ticketmaster todavía lista el recinto anterior. VERIFICAR recinto y precios en ticketmaster.pe.",
     "zones": [
-      { "name": "Norte", "price": 185.00 },
-      { "name": "Oriente", "price": 371.00 },
-      { "name": "Occidente 2", "price": 371.00 },
-      { "name": "Occidente 1", "price": 545.00 },
-      { "name": "Occidente Central", "price": 585.00 }
+      {
+        "name": "Norte",
+        "price": 185.0
+      },
+      {
+        "name": "Oriente",
+        "price": 371.0
+      },
+      {
+        "name": "Occidente 2",
+        "price": 371.0
+      },
+      {
+        "name": "Occidente 1",
+        "price": 545.0
+      },
+      {
+        "name": "Occidente Central",
+        "price": 585.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FY4k",
+    "title": "Agua Marina - Gracias por Todo",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Promo: Platinum S/ 323 y VIP S/ 229.50. Los demás sectores figuran agotados.",
+    "zones": [
+      {
+        "name": "VIP",
+        "price": 270.0
+      },
+      {
+        "name": "Platinum",
+        "price": 380.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FyFw",
+    "title": "Ghost Dance en Lima",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa: General S/ 169.",
+    "zones": [
+      {
+        "name": "General",
+        "price": 191.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17a7fx",
+    "title": "Concierto Elefante 30 Aniversario Tour",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa: Balcón S/ 150 y VIP S/ 234.",
+    "zones": [
+      {
+        "name": "Balcón",
+        "price": 185.0
+      },
+      {
+        "name": "VIP",
+        "price": 268.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17af-g",
+    "title": "Aniversario Brunella Torpoco",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa: VIP S/ 76, Box Individual Platinum S/ 185 y Box Completo Platinum S/ 2,177.",
+    "zones": [
+      {
+        "name": "VIP",
+        "price": 94.0
+      },
+      {
+        "name": "Box Individual Platinum",
+        "price": 227.0
+      },
+      {
+        "name": "Box Completo Platinum",
+        "price": 2677.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FyqZ",
+    "title": "Marc Almond",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa: Campo S/ 291 y Balcón S/ 318.50.",
+    "zones": [
+      {
+        "name": "Campo",
+        "price": 339.0
+      },
+      {
+        "name": "Balcón",
+        "price": 371.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17F8_Z",
+    "title": "Giant Rooks",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Hasta el 30/11 rige S/ 175.",
+    "zones": [
+      {
+        "name": "General",
+        "price": 223.6
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17F3bg",
+    "title": "Gira Super Arte - Lenny Tavárez y Justin Quiles",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa 1: General S/ 118, VIP S/ 205, Platinum S/ 274. Preventa 2: S/ 130, S/ 226, S/ 302.",
+    "zones": [
+      {
+        "name": "General",
+        "price": 142.0
+      },
+      {
+        "name": "VIP",
+        "price": 247.0
+      },
+      {
+        "name": "Platinum",
+        "price": 330.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17a7a_",
+    "title": "La Joaqui",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Con el 15% de descuento de preventa: S/ 226.65 en ambos pisos.",
+    "zones": [
+      {
+        "name": "General Piso 1",
+        "price": 264.0
+      },
+      {
+        "name": "General Piso 2",
+        "price": 264.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17aa8s",
+    "title": "Placebo",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Venta BBVA: Campo A S/ 290 y Campo B S/ 145.",
+    "zones": [
+      {
+        "name": "Campo B",
+        "price": 166.7
+      },
+      {
+        "name": "Campo A",
+        "price": 333.4
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FIbA",
+    "title": "Quiet Riot - Metal Health Latin American Tour 2027",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa con 15% de descuento: General S/ 213.75, Campo VIP S/ 267.75 y Balcón VIP S/ 318.50.",
+    "zones": [
+      {
+        "name": "General (primer piso)",
+        "price": 249.0
+      },
+      {
+        "name": "Campo VIP (primer piso)",
+        "price": 312.0
+      },
+      {
+        "name": "Balcón VIP (segundo piso)",
+        "price": 371.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17aAqF",
+    "title": "Soen",
+    "note": "Fuente: tabla de precios de ticketmaster.pe (noviembre de 2026). Precio regular en soles. Preventa 1: S/ 248. Preventa 2 (del 01/11/26 al 28/02/27): S/ 278. Regular desde el 01/03/27: S/ 308.",
+    "zones": [
+      {
+        "name": "General",
+        "price": 308.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17avOt",
+    "title": "Lima Latin Dúo - Juan Luis Guerra y Carlos Vives",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Preventa BBVA agotada. Tribuna aparece agotada en el tarifario, sin precio legible.",
+    "zones": [
+      {
+        "name": "Silla de ruedas (Occidente/Oriente)",
+        "price": 337.0
+      },
+      {
+        "name": "VIP (stand up)",
+        "price": 299.0
+      },
+      {
+        "name": "Occidente/Oriente (numerado)",
+        "price": 409.0
+      },
+      {
+        "name": "Platinum (numerado)",
+        "price": 495.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ177bOO",
+    "title": "Marco Antonio Solís",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Precios full agotados; se usa la promo final de 30% (todos los medios de pago). Con 35% BBVA: VIP S/ 261 y Tribuna S/ 140.50 (Platinum agotada). Suscriptor El Comercio: Platinum S/ 468, VIP S/ 329, Tribuna S/ 174.50.",
+    "zones": [
+      {
+        "name": "Tribuna (sin numerar)",
+        "price": 149.0
+      },
+      {
+        "name": "VIP (numerado)",
+        "price": 278.0
+      },
+      {
+        "name": "Platinum (numerado)",
+        "price": 396.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FoAa",
+    "title": "The Strokes",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Preventa BBVA (15%) agotada.",
+    "zones": [
+      {
+        "name": "Tribuna",
+        "price": 218.5
+      },
+      {
+        "name": "Cancha 2",
+        "price": 299.0
+      },
+      {
+        "name": "Cancha 1",
+        "price": 448.5
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FtZ4",
+    "title": "Soy Luna 2026",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Segunda fecha (19/11). Preventa BBVA: Tribuna S/ 130, VIP S/ 225, Platinum S/ 320. Popular (stand up) agotada.",
+    "zones": [
+      {
+        "name": "Tribuna (sin numerar)",
+        "price": 150.0
+      },
+      {
+        "name": "VIP (numerado)",
+        "price": 260.0
+      },
+      {
+        "name": "Platinum (numerado)",
+        "price": 370.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17kAux",
+    "title": "Gorillaz",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Precio regular desde el 22/10 hasta el 23/11 y/o agotar stock.",
+    "zones": [
+      {
+        "name": "General",
+        "price": 231.0
+      },
+      {
+        "name": "VIP",
+        "price": 342.0
+      },
+      {
+        "name": "Platinum",
+        "price": 463.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17k8ao",
+    "title": "Chayanne - Bailemos Otra Vez Tour 2026",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Con 20% BBVA o suscriptor El Comercio la entrada baja (p. ej. General S/ 295, VIP S/ 425, Platinum S/ 595); varias zonas con BBVA ya están agotadas.",
+    "zones": [
+      {
+        "name": "Tribuna Norte",
+        "price": 175.0
+      },
+      {
+        "name": "General",
+        "price": 355.0
+      },
+      {
+        "name": "VIP",
+        "price": 515.0
+      },
+      {
+        "name": "Occidente/Oriente (numerado)",
+        "price": 615.0
+      },
+      {
+        "name": "Platinum (numerado)",
+        "price": 725.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FOqy",
+    "title": "Happy Music Live",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Precios full del 28/06 al 04/12. Con 15% BBVA: Tribuna S/ 127, VIP S/ 209, Occidente/Oriente S/ 282, Platinum S/ 343.",
+    "zones": [
+      {
+        "name": "Tribuna",
+        "price": 145.0
+      },
+      {
+        "name": "VIP (stand up)",
+        "price": 240.0
+      },
+      {
+        "name": "Occidente/Oriente (sin numerar)",
+        "price": 325.0
+      },
+      {
+        "name": "Platinum (stand up)",
+        "price": 395.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17af-I",
+    "title": "Ana Gabriel - Claro de Luna Tour 2027",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Preventa BBVA (15%): Tribuna S/ 165, VIP S/ 265, Platinum S/ 360.",
+    "zones": [
+      {
+        "name": "Tribuna (sin numerar)",
+        "price": 190.0
+      },
+      {
+        "name": "VIP (numerado)",
+        "price": 305.0
+      },
+      {
+        "name": "Platinum (numerado)",
+        "price": 415.0
+      },
+      {
+        "name": "Silla de ruedas",
+        "price": 415.0
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17F-f8",
+    "title": "Blessd",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Promo final 25% (todos los medios de pago). El evento fue el 29 de octubre.",
+    "zones": [
+      {
+        "name": "Tribuna (sin numerar)",
+        "price": 87.5
+      },
+      {
+        "name": "VIP (stand up)",
+        "price": 167.5
+      },
+      {
+        "name": "Platinum (stand up)",
+        "price": 217.5
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17FOqw",
+    "title": "Haunted Superclub pres. Carl Cox & Guy J",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Último precio publicado (preventa 3). El evento fue el 30 de octubre.",
+    "zones": [
+      {
+        "name": "Club 10 (ingreso hasta las 10pm)",
+        "price": 202.5
+      },
+      {
+        "name": "Club 11 (ingreso hasta las 11pm)",
+        "price": 236.3
+      },
+      {
+        "name": "Club All Night",
+        "price": 270.0
+      },
+      {
+        "name": "SuperVIP 11 (ingreso hasta las 11pm)",
+        "price": 315.0
+      },
+      {
+        "name": "SuperVIP",
+        "price": 348.8
+      }
+    ]
+  },
+  {
+    "externalId": "tm:ZFIMVHtnMZ17aFFt",
+    "title": "Haunted Superclub Día 2 pres. Adam Beyer",
+    "note": "Fuente: tarifario de ticketmaster.pe (noviembre de 2026). Precio full/regular en soles, comisión incluida. Último precio publicado (preventa 2). El evento fue el 31 de octubre.",
+    "zones": [
+      {
+        "name": "Club 9 (ingreso hasta las 9pm)",
+        "price": 112.5
+      },
+      {
+        "name": "Club 10 (ingreso hasta las 10pm)",
+        "price": 135.0
+      },
+      {
+        "name": "Club 11 (ingreso hasta las 11pm)",
+        "price": 151.9
+      },
+      {
+        "name": "Club All Night",
+        "price": 168.8
+      },
+      {
+        "name": "SuperVIP",
+        "price": 258.8
+      }
+    ]
+  },
+  {
+    "externalId": "hist:bts-en-lima-dia-1",
+    "title": "BTS en Lima - Día 1 (7 de octubre de 2026)",
+    "ticketUrl": "https://www.ticketmaster.pe/event/bts-world-tour-arirang",
+    "note": "Fuente: tarifario de ticketmaster.pe (BTS World Tour 'Arirang') y Diario Correo (27/03/2026, precios de Live Nation Perú). Precio regular en soles, comisión incluida; todas las zonas se agotaron. Existía además el Soundcheck Package a S/ 2,591.",
+    "zones": [
+      {
+        "name": "Tribuna Norte/Sur (numerado)",
+        "price": 483.0
+      },
+      {
+        "name": "Tribuna Oriente/Occidente (numerado)",
+        "price": 667.0
+      },
+      {
+        "name": "Campo",
+        "price": 851.0
+      }
+    ]
+  },
+  {
+    "externalId": "hist:bts-en-lima-dia-2",
+    "title": "BTS en Lima - Día 2 (9 de octubre de 2026)",
+    "ticketUrl": "https://www.ticketmaster.pe/event/bts-world-tour-arirang",
+    "note": "Fuente: tarifario de ticketmaster.pe (BTS World Tour 'Arirang') y Diario Correo (27/03/2026, precios de Live Nation Perú). Precio regular en soles, comisión incluida; todas las zonas se agotaron. Existía además el Soundcheck Package a S/ 2,591.",
+    "zones": [
+      {
+        "name": "Tribuna Norte/Sur (numerado)",
+        "price": 483.0
+      },
+      {
+        "name": "Tribuna Oriente/Occidente (numerado)",
+        "price": 667.0
+      },
+      {
+        "name": "Campo",
+        "price": 851.0
+      }
+    ]
+  },
+  {
+    "externalId": "hist:bts-en-lima-dia-3",
+    "title": "BTS en Lima - Día 3 (10 de octubre de 2026)",
+    "ticketUrl": "https://www.ticketmaster.pe/event/bts-world-tour-arirang",
+    "note": "Fuente: tarifario de ticketmaster.pe (BTS World Tour 'Arirang') y Diario Correo (27/03/2026, precios de Live Nation Perú). Precio regular en soles, comisión incluida; todas las zonas se agotaron. Existía además el Soundcheck Package a S/ 2,591.",
+    "zones": [
+      {
+        "name": "Tribuna Norte/Sur (numerado)",
+        "price": 483.0
+      },
+      {
+        "name": "Tribuna Oriente/Occidente (numerado)",
+        "price": 667.0
+      },
+      {
+        "name": "Campo",
+        "price": 851.0
+      }
     ]
   }
 ]
