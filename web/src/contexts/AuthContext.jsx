@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 import { setAuthFailureHandler } from '../services/api'
 import { authService } from '../services/authService'
 import { tokenStore } from '../services/tokenStore'
@@ -21,8 +22,18 @@ export function AuthProvider({ children }) {
     return session.user
   }, [])
 
+  // El handler vive más que un render: lee el usuario actual desde una ref
+  const userRef = useRef(null)
   useEffect(() => {
-    setAuthFailureHandler(() => setUser(null))
+    userRef.current = user
+  }, [user])
+
+  useEffect(() => {
+    // El refresh falló: la sesión no se puede recuperar. PrivateRoute lleva al login las rutas protegidas.
+    setAuthFailureHandler(() => {
+      if (userRef.current) toast.error('Tu sesión expiró. Inicia sesión nuevamente.', { id: 'session-expired' })
+      setUser(null)
+    })
     return () => setAuthFailureHandler(() => {})
   }, [])
 
