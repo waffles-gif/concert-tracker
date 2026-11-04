@@ -2,6 +2,7 @@ import { Heart } from 'lucide-react'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { interactionService } from '../services/interactionService'
 import { getErrorMessage } from '../utils/apiError'
 
@@ -9,24 +10,26 @@ import { getErrorMessage } from '../utils/apiError'
 export default function FavoriteButton({ concertId, favorite, onChange }) {
   const [saving, setSaving] = useState(false)
 
-  const handleClick = async () => {
-    if (saving) return
-    setSaving(true)
-    try {
-      if (favorite) {
-        await interactionService.removeFavorite(concertId)
-        toast.success('Quitado de tus favoritos')
-      } else {
-        await interactionService.addFavorite(concertId)
-        toast.success('¡Agregado a tus favoritos!')
+  const once = useSingleFlight()
+
+  const handleClick = () =>
+    once(async () => {
+      setSaving(true)
+      try {
+        if (favorite) {
+          await interactionService.removeFavorite(concertId)
+          toast.success('Quitado de tus favoritos')
+        } else {
+          await interactionService.addFavorite(concertId)
+          toast.success('¡Agregado a tus favoritos!')
+        }
+        onChange(!favorite)
+      } catch (error) {
+        toast.error(getErrorMessage(error))
+      } finally {
+        setSaving(false)
       }
-      onChange(!favorite)
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-    } finally {
-      setSaving(false)
-    }
-  }
+    })
 
   return (
     <button

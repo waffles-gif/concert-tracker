@@ -7,6 +7,7 @@ import Pagination from '../components/Pagination'
 import Spinner from '../components/Spinner'
 import { useAuth } from '../hooks/useAuth'
 import { useFetch } from '../hooks/useFetch'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { artistService } from '../services/artistService'
 import { genreService } from '../services/genreService'
 import { interactionService } from '../services/interactionService'
@@ -58,25 +59,28 @@ export default function ArtistsPage() {
   // Mismo mínimo que el onboarding: no se puede bajar de MIN_FOLLOWS artistas seguidos
   const lockedMessage = !isAdmin && followedCount <= MIN_FOLLOWS ? `Debes seguir al menos ${MIN_FOLLOWS} artistas` : undefined
 
-  const toggleFollow = async (artist) => {
+  const once = useSingleFlight()
+
+  const toggleFollow = (artist) => {
     if (!isAuthenticated) {
       navigate('/login', { state: { from: location } })
-      return
+      return undefined
     }
-    if (busyId) return
-    const willFollow = !followedIds.has(artist.id)
-    setBusyId(artist.id)
-    try {
-      if (willFollow) await interactionService.followArtist(artist.id)
-      else await interactionService.unfollowArtist(artist.id)
-      setOverrides((current) => ({ ...current, [artist.id]: willFollow }))
-      updateFollowCount(followedCount + (willFollow ? 1 : -1))
-      toast.success(willFollow ? `Ahora sigues a ${artist.name}` : `Dejaste de seguir a ${artist.name}`)
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-    } finally {
-      setBusyId(null)
-    }
+    return once(async () => {
+      const willFollow = !followedIds.has(artist.id)
+      setBusyId(artist.id)
+      try {
+        if (willFollow) await interactionService.followArtist(artist.id)
+        else await interactionService.unfollowArtist(artist.id)
+        setOverrides((current) => ({ ...current, [artist.id]: willFollow }))
+        updateFollowCount(followedCount + (willFollow ? 1 : -1))
+        toast.success(willFollow ? `Ahora sigues a ${artist.name}` : `Dejaste de seguir a ${artist.name}`)
+      } catch (error) {
+        toast.error(getErrorMessage(error))
+      } finally {
+        setBusyId(null)
+      }
+    })
   }
 
   const items = artists.data?.content ?? []

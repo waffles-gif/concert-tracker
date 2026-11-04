@@ -6,6 +6,7 @@ import ArtistCard from '../components/ArtistCard'
 import Spinner from '../components/Spinner'
 import { useAuth } from '../hooks/useAuth'
 import { useFetch } from '../hooks/useFetch'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { artistService } from '../services/artistService'
 import { genreService } from '../services/genreService'
 import { interactionService } from '../services/interactionService'
@@ -50,24 +51,26 @@ export default function OnboardingPage() {
   const toggleGenre = (id) =>
     setSelectedGenres((current) => (current.includes(id) ? current.filter((g) => g !== id) : [...current, id]))
 
-  const toggleFollow = async (artist) => {
-    if (busyId) return
-    const willFollow = !followedIds.has(artist.id)
-    setBusyId(artist.id)
-    try {
-      if (willFollow) await interactionService.followArtist(artist.id)
-      else await interactionService.unfollowArtist(artist.id)
-      setOverrides((current) => ({ ...current, [artist.id]: willFollow }))
-      updateFollowCount(followedCount + (willFollow ? 1 : -1))
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-    } finally {
-      setBusyId(null)
-    }
-  }
+  const once = useSingleFlight()
+
+  const toggleFollow = (artist) =>
+    once(async () => {
+      const willFollow = !followedIds.has(artist.id)
+      setBusyId(artist.id)
+      try {
+        if (willFollow) await interactionService.followArtist(artist.id)
+        else await interactionService.unfollowArtist(artist.id)
+        setOverrides((current) => ({ ...current, [artist.id]: willFollow }))
+        updateFollowCount(followedCount + (willFollow ? 1 : -1))
+      } catch (error) {
+        toast.error(getErrorMessage(error))
+      } finally {
+        setBusyId(null)
+      }
+    })
 
   const finish = () => {
-    toast.success('¡Todo listo! Ya puedes explorar conciertos.')
+    toast.success('¡Todo listo! Ya puedes explorar conciertos.', { id: 'onboarding-done' })
     navigate('/', { replace: true })
   }
 

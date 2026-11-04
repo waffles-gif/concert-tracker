@@ -42,6 +42,34 @@ function refreshSession() {
   return refreshPromise
 }
 
+// Reintentos automáticos: solo para GET (repetir un POST podría duplicar una reseña o una asistencia)
+// y solo en fallos pasajeros: sin conexión, o 502/503/504. Un 500 casi siempre es un bug y un timeout
+// dejaría la pantalla colgada, así que esos no se reintentan.
+const MAX_RETRIES = 2
+const RETRY_DELAY_MS = 500
+const RETRYABLE_STATUSES = [502, 503, 504]
+
+function isRecoverable(error) {
+  const method = error.config?.method?.toLowerCase()
+  if (method !== 'get' || error.code === 'ERR_CANCELED' || error.code === 'ECONNABORTED') return false
+  return !error.response || RETRYABLE_STATUSES.includes(error.response.status)
+}
+
+// Espera `ms`, pero se despierta antes si la petición se cancela (el usuario cambió de pantalla).
+function wait(ms, signal) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms)
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer)
+        resolve()
+      },
+      { once: true },
+    )
+  })
+}
+
 api.interceptors.request.use((config) => {
   const token = tokenStore.getAccessToken()
   if (token && !isAuthEndpoint(config.url)) {
@@ -66,6 +94,17 @@ api.interceptors.response.use(
         tokenStore.clear()
         onAuthFailure()
       }
+    }
+
+    const attempts = original?._retryCount ?? 0
+    if (original && isRecoverable(error) && attempts < MAX_RETRIES) {
+      original._retryCount = attempts + 1
+      await wait(RETRY_DELAY_MS * original._retryCount, original.signal)
+      if (!original.signal?.aborted) return api(original)
+      // Se canceló mientras esperaba: se trata como cualquier cancelación (sin toast ni error en pantalla)
+      const canceled = new axios.CanceledError()
+      canceled.apiError = normalizeError(canceled)
+      return Promise.reject(canceled)
     }
 
     error.apiError = normalizeError(error)

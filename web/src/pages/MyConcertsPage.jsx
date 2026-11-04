@@ -7,6 +7,7 @@ import ConcertCard from '../components/ConcertCard'
 import Pagination from '../components/Pagination'
 import Spinner from '../components/Spinner'
 import { useFetch } from '../hooks/useFetch'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { interactionService } from '../services/interactionService'
 import { getErrorMessage } from '../utils/apiError'
 
@@ -48,17 +49,20 @@ function PastConcertPrompt({ item }) {
   const navigate = useNavigate()
   const [saving, setSaving] = useState(false)
 
-  const handleClick = async () => {
-    setSaving(true)
-    try {
-      await interactionService.setAttendance(item.concert.id, 'YA_FUI')
-      toast.success('¡Marcado como "Ya fui"! Ya puedes dejar tu reseña.')
-      navigate(`/conciertos/${item.concert.id}`)
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-      setSaving(false)
-    }
-  }
+  const once = useSingleFlight()
+
+  const handleClick = () =>
+    once(async () => {
+      setSaving(true)
+      try {
+        await interactionService.setAttendance(item.concert.id, 'YA_FUI')
+        toast.success('¡Marcado como "Ya fui"! Ya puedes dejar tu reseña.')
+        navigate(`/conciertos/${item.concert.id}`)
+      } catch (error) {
+        toast.error(getErrorMessage(error))
+        setSaving(false)
+      }
+    })
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">

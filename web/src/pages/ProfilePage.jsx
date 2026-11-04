@@ -13,6 +13,7 @@ import Spinner from '../components/Spinner'
 import TextAreaField from '../components/TextAreaField'
 import { useAuth } from '../hooks/useAuth'
 import { useFetch } from '../hooks/useFetch'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { interactionService } from '../services/interactionService'
 import { userService } from '../services/userService'
 import { getErrorMessage } from '../utils/apiError'
@@ -109,17 +110,20 @@ EditProfileForm.propTypes = {
 function RemoveFavoriteButton({ concertId, onRemoved }) {
   const [removing, setRemoving] = useState(false)
 
-  const handleClick = async () => {
-    setRemoving(true)
-    try {
-      await interactionService.removeFavorite(concertId)
-      toast.success('Quitado de tus favoritos')
-      onRemoved()
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-      setRemoving(false)
-    }
-  }
+  const once = useSingleFlight()
+
+  const handleClick = () =>
+    once(async () => {
+      setRemoving(true)
+      try {
+        await interactionService.removeFavorite(concertId)
+        toast.success('Quitado de tus favoritos')
+        onRemoved()
+      } catch (error) {
+        toast.error(getErrorMessage(error))
+        setRemoving(false)
+      }
+    })
 
   return (
     <button
