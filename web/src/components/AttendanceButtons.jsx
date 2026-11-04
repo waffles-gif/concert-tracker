@@ -2,6 +2,7 @@ import { CalendarCheck, CheckCircle2 } from 'lucide-react'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { interactionService } from '../services/interactionService'
 import { getErrorMessage } from '../utils/apiError'
 
@@ -14,18 +15,22 @@ const OPTIONS = [
 export default function AttendanceButtons({ concertId, isPast, status: current, onChange }) {
   const [submitting, setSubmitting] = useState(null)
 
-  const handleClick = async (status) => {
-    if (submitting || status === current) return
-    setSubmitting(status)
-    try {
-      await interactionService.setAttendance(concertId, status)
-      onChange(status)
-      toast.success(status === 'YA_FUI' ? '¡Marcado como "Ya fui"!' : '¡Marcado como "Voy a ir"!')
-    } catch (error) {
-      toast.error(getErrorMessage(error))
-    } finally {
-      setSubmitting(null)
-    }
+  const once = useSingleFlight()
+
+  const handleClick = (status) => {
+    if (status === current) return undefined
+    return once(async () => {
+      setSubmitting(status)
+      try {
+        await interactionService.setAttendance(concertId, status)
+        onChange(status)
+        toast.success(status === 'YA_FUI' ? '¡Marcado como "Ya fui"!' : '¡Marcado como "Voy a ir"!')
+      } catch (error) {
+        toast.error(getErrorMessage(error))
+      } finally {
+        setSubmitting(null)
+      }
+    })
   }
 
   return (

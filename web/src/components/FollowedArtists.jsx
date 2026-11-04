@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useFetch } from '../hooks/useFetch'
+import { useSingleFlight } from '../hooks/useSingleFlight'
 import { interactionService } from '../services/interactionService'
 import { userService } from '../services/userService'
 import { getErrorMessage } from '../utils/apiError'
@@ -17,20 +18,22 @@ export default function FollowedArtists() {
   const { data: follows, loading, error, retry } = useFetch('profile-follows', (signal) => userService.follows(signal))
   const [busyId, setBusyId] = useState(null)
 
-  const handleUnfollow = async (artist) => {
-    if (busyId) return
-    setBusyId(artist.id)
-    try {
-      await interactionService.unfollowArtist(artist.id)
-      updateFollowCount(follows.length - 1)
-      toast.success(`Dejaste de seguir a ${artist.name}`)
-      retry()
-    } catch (err) {
-      toast.error(getErrorMessage(err))
-    } finally {
-      setBusyId(null)
-    }
-  }
+  const once = useSingleFlight()
+
+  const handleUnfollow = (artist) =>
+    once(async () => {
+      setBusyId(artist.id)
+      try {
+        await interactionService.unfollowArtist(artist.id)
+        updateFollowCount(follows.length - 1)
+        toast.success(`Dejaste de seguir a ${artist.name}`)
+        retry()
+      } catch (err) {
+        toast.error(getErrorMessage(err))
+      } finally {
+        setBusyId(null)
+      }
+    })
 
   // Si dejara de seguir y quedaran menos del mínimo, el onboarding obligatorio lo sacaría de aquí
   const atMinimum = !isAdmin && follows && follows.length <= MIN_FOLLOWS
