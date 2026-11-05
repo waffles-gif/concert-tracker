@@ -100,7 +100,7 @@ export default function ConcertDetailPage() {
         />
       )}
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <section className="space-y-5 rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200 lg:col-span-2">
           <ul className="space-y-3 text-slate-700">
             <InfoRow icon={CalendarDays}>{formatDateTime(concert.date)}</InfoRow>
@@ -133,7 +133,7 @@ export default function ConcertDetailPage() {
                         </span>
                       )}
                     </span>
-                    <span className="font-semibold tabular-nums">{formatPrice(zone.price)}</span>
+                    <span className="shrink-0 whitespace-nowrap font-semibold tabular-nums">{formatPrice(zone.price)}</span>
                   </li>
                 ))}
               </ul>
@@ -150,7 +150,7 @@ export default function ConcertDetailPage() {
               >
                 Comprar entradas <ExternalLink size={16} aria-hidden="true" />
               </a>
-              <p className="mt-2 text-xs text-slate-400">
+              <p className="mt-2 text-xs text-slate-500">
                 Se abre la página oficial de venta, donde ves los precios y zonas actualizados.
               </p>
             </div>

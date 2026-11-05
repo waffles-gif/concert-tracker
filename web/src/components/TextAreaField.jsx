@@ -11,7 +11,7 @@ const TextAreaField = forwardRef(function TextAreaField({ label, error, hint, ro
         <label htmlFor={id} className="block text-sm font-medium text-slate-700">
           {label}
         </label>
-        {hint && <span className="text-xs text-slate-400">{hint}</span>}
+        {hint && <span className="text-xs text-slate-500">{hint}</span>}
       </div>
       <textarea
         id={id}

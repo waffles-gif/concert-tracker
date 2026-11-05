@@ -57,7 +57,7 @@ function EditProfileForm({ user, onSaved, onCancel }) {
           maxLength: { value: 100, message: 'El nombre no puede superar los 100 caracteres' },
         })}
       />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField label="País" error={errors.country?.message} {...register('country')} />
         <FormField label="Ciudad" error={errors.city?.message} {...register('city')} />
       </div>
@@ -197,14 +197,14 @@ function FavoriteConcerts() {
       )}
 
       {favorites.length > 0 && (
-        <div className={`grid gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-50' : ''}`}>
+        <div className={`grid grid-cols-1 gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-50' : ''}`}>
           {favorites.map((favorite) => (
             <ConcertCard
               key={favorite.concert.id}
               concert={favorite.concert}
               footer={
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-slate-400">Agregado el {formatDate(favorite.addedAt)}</span>
+                  <span className="text-xs text-slate-500">Agregado el {formatDate(favorite.addedAt)}</span>
                   <RemoveFavoriteButton concertId={favorite.concert.id} onRemoved={handleRemoved} />
                 </div>
               }
@@ -288,7 +288,7 @@ export default function ProfilePage() {
             {user.bio ? (
               <p className="mt-1 whitespace-pre-line text-slate-700">{user.bio}</p>
             ) : (
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-500">
                 Aún no escribiste tu bio. Pulsa &ldquo;Editar perfil&rdquo; para contar algo sobre ti.
               </p>
             )}

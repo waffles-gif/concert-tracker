@@ -23,7 +23,7 @@ export default function ReviewList({ reviews }) {
             <RatingStars rating={review.rating} />
           </div>
           {review.comment && <p className="mt-2 text-sm text-slate-700">{review.comment}</p>}
-          <p className="mt-2 text-xs text-slate-400">{formatDate(review.createdAt)}</p>
+          <p className="mt-2 text-xs text-slate-500">{formatDate(review.createdAt)}</p>
         </li>
       ))}
     </ul>
