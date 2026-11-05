@@ -93,7 +93,7 @@ export default function ConcertsPage() {
       <form
         role="search"
         onSubmit={(e) => e.preventDefault()}
-        className="mt-4 grid gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:grid-cols-2 lg:grid-cols-6"
+        className="mt-4 grid grid-cols-1 gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:grid-cols-2 lg:grid-cols-6"
       >
         <label className="relative sm:col-span-2 lg:col-span-2">
           <span className="sr-only">Buscar por artista</span>
@@ -194,7 +194,7 @@ export default function ConcertsPage() {
         )}
 
         {concerts.length > 0 && (
-          <div className={`grid gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-50' : ''}`}>
+          <div className={`grid grid-cols-1 gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-50' : ''}`}>
             {concerts.map((concert) => (
               <ConcertCard key={concert.id} concert={concert} />
             ))}

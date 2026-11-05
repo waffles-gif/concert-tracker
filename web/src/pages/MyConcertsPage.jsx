@@ -185,7 +185,7 @@ export default function MyConcertsPage() {
         )}
 
         {items.length > 0 && (
-          <div className={`grid gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-50' : ''}`}>
+          <div className={`grid grid-cols-1 gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${loading ? 'opacity-50' : ''}`}>
             {items.map((item) => (
               <ConcertCard
                 key={item.attendanceId}

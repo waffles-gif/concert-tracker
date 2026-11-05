@@ -43,7 +43,7 @@ export default function FollowedArtists() {
     <section className="mt-10" aria-labelledby="follows-title">
       <h2 id="follows-title" className="mb-1 flex items-center gap-2 text-xl font-bold">
         <Music2 size={20} className="text-indigo-600" aria-hidden="true" /> Artistas que sigues
-        {follows && <span className="text-base font-medium text-slate-400">({follows.length})</span>}
+        {follows && <span className="text-base font-medium text-slate-500">({follows.length})</span>}
       </h2>
       <p className="mb-4 text-sm text-slate-500">
         {atMinimum
@@ -76,7 +76,7 @@ export default function FollowedArtists() {
       )}
 
       {follows && follows.length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {follows.map((follow) => (
             <ArtistCard
               key={follow.artistId}

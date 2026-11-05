@@ -135,7 +135,7 @@ export default function OnboardingPage() {
           >
             Ver artistas
           </button>
-          {selectedGenres.length === 0 && <p className="mt-2 text-xs text-slate-400">Elige al menos un género.</p>}
+          {selectedGenres.length === 0 && <p className="mt-2 text-xs text-slate-500">Elige al menos un género.</p>}
         </div>
       )}
 
@@ -191,7 +191,7 @@ export default function OnboardingPage() {
           )}
 
           {artistsState.data && artistsState.data.length > 0 && (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {artistsState.data.map((artist) => (
                 <ArtistCard
                   key={artist.id}

@@ -9,7 +9,8 @@ const dateFormatter = new Intl.DateTimeFormat('es-PE', {
 
 export function formatDateTime(isoDate) {
   if (!isoDate) return '—'
-  const formatted = dateFormatter.format(new Date(isoDate))
+  // El espacio de "p. m." no debe partirse en dos líneas en pantallas angostas
+  const formatted = dateFormatter.format(new Date(isoDate)).replace(/([ap])\.\s*m\./i, '$1.\u00a0m.')
   return formatted.charAt(0).toUpperCase() + formatted.slice(1)
 }
 
@@ -27,5 +28,6 @@ export function formatDate(isoDate) {
 // Sin precio (los conciertos importados de Ticketmaster no lo traen) se muestra "Precio por confirmar"
 export function formatPrice(value) {
   if (value == null) return 'Precio por confirmar'
-  return `S/ ${Number(value).toFixed(2)}`
+  // Espacio sin salto: "S/" y el monto siempre quedan juntos
+  return `S/\u00a0${Number(value).toFixed(2)}`
 }

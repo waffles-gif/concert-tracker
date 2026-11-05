@@ -134,7 +134,7 @@ export default function DashboardPage() {
         />
       </section>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-3">
         <div className="space-y-10 lg:col-span-2">
           <section aria-labelledby="going-title">
             <SectionTitle id="going-title" title="Tus próximos conciertos" to="/mis-conciertos" />
@@ -153,7 +153,7 @@ export default function DashboardPage() {
               </div>
             )}
             {going.data && going.data.content.length > 0 && (
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {going.data.content.map((item) => (
                   <ConcertCard key={item.attendanceId} concert={item.concert} />
                 ))}
@@ -171,7 +171,7 @@ export default function DashboardPage() {
               </p>
             )}
             {upcoming.data && upcoming.data.content.length > 0 && (
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {upcoming.data.content.map((concert) => (
                   <ConcertCard key={concert.id} concert={concert} />
                 ))}
@@ -204,7 +204,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="mt-2 flex items-center justify-between gap-2">
                     <RatingStars rating={review.rating} size={14} />
-                    <span className="text-xs text-slate-400">{formatDate(review.createdAt)}</span>
+                    <span className="text-xs text-slate-500">{formatDate(review.createdAt)}</span>
                   </div>
                   {review.comment && <p className="mt-2 line-clamp-2 text-sm text-slate-600">{review.comment}</p>}
                 </li>

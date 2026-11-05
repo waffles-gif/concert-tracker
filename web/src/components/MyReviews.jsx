@@ -23,7 +23,7 @@ export default function MyReviews() {
     <section className="mt-10" aria-labelledby="reviews-title">
       <h2 id="reviews-title" className="mb-1 flex items-center gap-2 text-xl font-bold">
         <MessageSquareText size={20} className="text-indigo-600" aria-hidden="true" /> Mis reseñas
-        {data && <span className="text-base font-medium text-slate-400">({data.totalElements})</span>}
+        {data && <span className="text-base font-medium text-slate-500">({data.totalElements})</span>}
       </h2>
       <p className="mb-4 text-sm text-slate-500">Las opiniones que dejaste de los conciertos a los que fuiste.</p>
 
@@ -72,7 +72,7 @@ export default function MyReviews() {
                 <RatingStars rating={review.rating} />
               </div>
               {review.comment && <p className="mt-2 text-sm text-slate-700">{review.comment}</p>}
-              <p className="mt-2 text-xs text-slate-400">{formatDate(review.createdAt)}</p>
+              <p className="mt-2 text-xs text-slate-500">{formatDate(review.createdAt)}</p>
             </li>
           ))}
         </ul>
