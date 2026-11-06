@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import ConcertDetailScreen from '../screens/ConcertDetailScreen'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
+import ScanQrScreen from '../screens/ScanQrScreen'
 import { colors } from '../theme'
 import AppTabs from './AppTabs'
 
@@ -11,7 +12,7 @@ const Stack = createNativeStackNavigator()
 
 // Stack principal:
 // - Sin sesión: Login y Register.
-// - Con sesión: las tabs (Conciertos, Perfil) y encima las pantallas de detalle.
+// - Con sesión: las tabs (Conciertos, Historial, Perfil) y encima el detalle y el escáner de QR.
 // Al cambiar `user` en AuthContext, React Navigation cambia de grupo solo (no hace falta navigate).
 export default function RootNavigator() {
   const { isAuthenticated, initializing } = useAuth()
@@ -24,6 +25,7 @@ export default function RootNavigator() {
         <>
           <Stack.Screen name="Tabs" component={AppTabs} options={{ headerShown: false }} />
           <Stack.Screen name="ConcertDetail" component={ConcertDetailScreen} options={{ title: 'Concierto' }} />
+          <Stack.Screen name="ScanQr" component={ScanQrScreen} options={{ title: 'Escanear QR' }} />
         </>
       ) : (
         <Stack.Group screenOptions={{ headerShown: false, animationTypeForReplace: 'pop' }}>

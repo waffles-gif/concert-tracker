@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { ActivityIndicator, Image, Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import ConcertActions from '../components/ConcertActions'
+import ConcertQrCard from '../components/ConcertQrCard'
 import PrimaryButton from '../components/PrimaryButton'
 import ReviewForm from '../components/ReviewForm'
 import ReviewItem from '../components/ReviewItem'
@@ -101,6 +102,13 @@ export default function ConcertDetailScreen({ route, navigation }) {
   const isPast = new Date(concert.date) < new Date()
   const canReview = interactions.status?.attendanceStatus === 'YA_FUI' && !interactions.status?.reviewed
 
+  // Deslizar hacia abajo recarga todo, también lo que hubiera fallado por separado.
+  const handleRefresh = () => {
+    refresh()
+    interactions.retry()
+    weather.retry()
+  }
+
   const handleReview = async (review) => {
     await interactions.submitReview(review)
     reloadReviews()
@@ -110,7 +118,7 @@ export default function ConcertDetailScreen({ route, navigation }) {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} colors={[colors.primary]} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[colors.primary]} />}
     >
       {concert.imageUrl ? (
         <Image source={{ uri: concert.imageUrl }} style={styles.image} accessibilityIgnoresInvertColors />
@@ -184,6 +192,9 @@ export default function ConcertDetailScreen({ route, navigation }) {
           onToggleFollow={interactions.toggleFollow}
         />
       ) : null}
+
+      <Text style={styles.sectionTitle}>Comparte este concierto</Text>
+      <ConcertQrCard concertId={concert.id} />
 
       <Text style={styles.sectionTitle}>Artista</Text>
       <View style={styles.card}>

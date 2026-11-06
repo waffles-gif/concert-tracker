@@ -15,7 +15,7 @@ function Row({ icon, children }) {
 
 Row.propTypes = { icon: PropTypes.string.isRequired, children: PropTypes.node }
 
-export default function ConcertCard({ concert, onPress }) {
+export default function ConcertCard({ concert, onPress, note }) {
   return (
     <Pressable
       onPress={onPress}
@@ -30,6 +30,7 @@ export default function ConcertCard({ concert, onPress }) {
         <Row icon="location-outline">{formatPlace(concert)}</Row>
         <Row icon="ticket-outline">{formatPrice(concert.ticketPrice)}</Row>
       </View>
+      {note ? <Text style={styles.note}>{note}</Text> : null}
     </Pressable>
   )
 }
@@ -46,6 +47,7 @@ ConcertCard.propTypes = {
     country: PropTypes.string,
   }).isRequired,
   onPress: PropTypes.func,
+  note: PropTypes.string,
 }
 
 const styles = StyleSheet.create({
@@ -64,4 +66,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-start' },
   icon: { marginTop: 2, marginRight: spacing.sm },
   rowText: { flex: 1, fontSize: 14, color: colors.textMuted },
+  note: { fontSize: 13, fontWeight: '600', color: colors.primary, marginTop: spacing.md },
 })

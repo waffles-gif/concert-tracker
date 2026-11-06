@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }) {
     handleSubmit,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm({ defaultValues: { email: '', password: '' } })
+  } = useForm({ mode: 'onTouched', defaultValues: { email: '', password: '' } })
 
   const onSubmit = async ({ email, password }) => {
     setServerError(null)
@@ -70,7 +70,7 @@ export default function LoginScreen({ navigation }) {
             autoComplete="password"
             textContentType="password"
             returnKeyType="go"
-            onSubmitEditing={handleSubmit(onSubmit)}
+            onSubmitEditing={isSubmitting ? undefined : handleSubmit(onSubmit)}
           />
         )}
       />

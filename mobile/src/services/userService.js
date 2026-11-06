@@ -6,4 +6,7 @@ export const userService = {
 
   // GET /users/me/follows -> [{ artistId, name, country, imageUrl, followedAt }]
   follows: () => api.get('/users/me/follows').then((res) => res.data),
+
+  // GET /users/me/reviews -> paginado; cada reseña trae { id, rating, comment, createdAt, concertId, concertTitle, artistName }
+  reviews: (params, signal) => api.get('/users/me/reviews', { params, signal }).then((res) => res.data),
 }

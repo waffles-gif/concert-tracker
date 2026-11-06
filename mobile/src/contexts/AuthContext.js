@@ -3,6 +3,7 @@ import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { setAuthFailureHandler } from '../services/api'
 import { authService } from '../services/authService'
 import { tokenStorage } from '../services/tokenStorage'
+import { isSessionRejected } from '../utils/apiError'
 
 export const AuthContext = createContext(null)
 
@@ -34,9 +35,9 @@ export function AuthProvider({ children }) {
         const session = await authService.refresh(refreshToken)
         if (active) await startSession(session)
       } catch (error) {
-        // Solo se borran los tokens si el backend los rechazó; sin conexión se conservan
-        // para intentarlo de nuevo la próxima vez.
-        if (!error?.apiError?.isNetworkError) await tokenStorage.clear()
+        // Solo se borran los tokens si el backend los rechazó; sin conexión o con un 5xx
+        // se conservan para intentarlo de nuevo la próxima vez.
+        if (isSessionRejected(error)) await tokenStorage.clear()
       } finally {
         if (active) setInitializing(false)
       }

@@ -41,6 +41,12 @@ export function normalizeError(error) {
   return { status, message, isNetworkError: false, isCanceled: false }
 }
 
+// true solo si el backend rechazó la sesión. Sin conexión o con un 5xx la sesión sigue siendo válida
+// y no hay que sacar al usuario: el servidor puede estar despertando.
+export function isSessionRejected(error) {
+  return [400, 401, 403].includes(error?.response?.status)
+}
+
 export function getErrorMessage(error) {
   return error?.apiError?.message ?? normalizeError(error).message
 }

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback, useRef, useState } from 'react'
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import LoadingScreen from '../components/LoadingScreen'
 import PrimaryButton from '../components/PrimaryButton'
@@ -13,19 +14,25 @@ export default function ProfileScreen() {
   const { user: sessionUser, logout } = useAuth()
   const [state, setState] = useState({ profile: null, follows: [], loading: true, refreshing: false, error: null })
 
+  const loadedRef = useRef(false)
+
   const load = useCallback(async (mode = 'initial') => {
     setState((prev) => ({ ...prev, loading: mode === 'initial', refreshing: mode === 'refresh', error: null }))
     try {
       const [profile, follows] = await Promise.all([userService.me(), userService.follows()])
+      loadedRef.current = true
       setState({ profile, follows, loading: false, refreshing: false, error: null })
     } catch (error) {
       setState((prev) => ({ ...prev, loading: false, refreshing: false, error: getErrorMessage(error) }))
     }
   }, [])
 
-  useEffect(() => {
-    load()
-  }, [load])
+  // Se recarga al volver a la pestaña: si seguiste a un artista en el detalle, aquí ya aparece.
+  useFocusEffect(
+    useCallback(() => {
+      load(loadedRef.current ? 'silent' : 'initial')
+    }, [load]),
+  )
 
   if (state.loading) return <LoadingScreen message="Cargando tu perfil…" />
 
