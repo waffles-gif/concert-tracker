@@ -16,9 +16,11 @@ export default function RegisterScreen({ navigation }) {
     control,
     handleSubmit,
     getValues,
+    setError,
     setFocus,
     formState: { errors, isSubmitting },
   } = useForm({
+    mode: 'onTouched', // el error aparece al salir del campo, sin esperar a enviar
     defaultValues: { name: '', email: '', password: '', confirmPassword: '', country: '', city: '' },
   })
 
@@ -33,7 +35,9 @@ export default function RegisterScreen({ navigation }) {
         city: data.city.trim() || null,
       })
     } catch (error) {
-      setServerError(getErrorMessage(error))
+      // 409: el email ya está registrado, así que el error se muestra en ese campo.
+      if (error?.apiError?.status === 409) setError('email', { message: getErrorMessage(error) }, { shouldFocus: true })
+      else setServerError(getErrorMessage(error))
     }
   }
 
@@ -88,15 +92,15 @@ export default function RegisterScreen({ navigation }) {
         { secureTextEntry: true, returnKeyType: 'next', onSubmitEditing: () => setFocus('country') },
       )}
       <View style={styles.row}>
-        {field('country', 'País (opcional)', undefined, {
+        {field('country', 'País (opcional)', rules.country, {
           style: styles.half,
           returnKeyType: 'next',
           onSubmitEditing: () => setFocus('city'),
         })}
-        {field('city', 'Ciudad (opcional)', undefined, {
+        {field('city', 'Ciudad (opcional)', rules.city, {
           style: styles.half,
           returnKeyType: 'go',
-          onSubmitEditing: handleSubmit(onSubmit),
+          onSubmitEditing: isSubmitting ? undefined : handleSubmit(onSubmit),
         })}
       </View>
 

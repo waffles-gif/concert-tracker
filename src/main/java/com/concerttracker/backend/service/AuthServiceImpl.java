@@ -9,6 +9,7 @@ import com.concerttracker.backend.exception.DuplicateResourceException;
 import com.concerttracker.backend.exception.UnauthorizedException;
 import com.concerttracker.backend.repository.UserRepository;
 import com.concerttracker.backend.security.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,11 +61,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse refresh(String refreshToken) {
-        if (!"refresh".equals(jwtUtil.extractTokenType(refreshToken)) || jwtUtil.isTokenExpired(refreshToken)) {
+        String email;
+        try {
+            if (!"refresh".equals(jwtUtil.extractTokenType(refreshToken)) || jwtUtil.isTokenExpired(refreshToken)) {
+                throw new UnauthorizedException("Refresh token inválido o expirado");
+            }
+            email = jwtUtil.extractEmail(refreshToken);
+        } catch (JwtException | IllegalArgumentException e) {
+            // Un token vencido o mal formado hace fallar el parseo: es un 401, no un 500.
             throw new UnauthorizedException("Refresh token inválido o expirado");
         }
 
-        String email = jwtUtil.extractEmail(refreshToken);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("Usuario no encontrado"));
 

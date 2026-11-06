@@ -1,15 +1,23 @@
 // Reglas de react-hook-form que copian las validaciones del backend (UserRegisterRequest / LoginRequest),
 // así el usuario ve el error antes de llamar a la API.
-export const EMAIL_PATTERN = /^\S+@\S+\.\S+$/
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// `required` acepta un texto de puros espacios, pero el @NotBlank del backend no.
+const notBlank = (message) => (value) => value.trim().length > 0 || message
+
+// El teclado suele agregar un espacio al final del email; al enviar se recorta, así que no es un error.
+const validEmail = (value) => EMAIL_PATTERN.test(value.trim()) || 'El email no tiene un formato válido'
 
 export const rules = {
   name: {
     required: 'El nombre es obligatorio',
     maxLength: { value: 100, message: 'El nombre no puede superar los 100 caracteres' },
+    validate: notBlank('El nombre es obligatorio'),
   },
   email: {
     required: 'El email es obligatorio',
-    pattern: { value: EMAIL_PATTERN, message: 'El email no tiene un formato válido' },
+    maxLength: { value: 255, message: 'El email no puede superar los 255 caracteres' },
+    validate: validEmail,
   },
   loginPassword: {
     required: 'La contraseña es obligatoria',
@@ -17,5 +25,14 @@ export const rules = {
   newPassword: {
     required: 'La contraseña es obligatoria',
     minLength: { value: 8, message: 'La contraseña debe tener al menos 8 caracteres' },
+    // BCrypt, con el que el backend guarda la contraseña, no acepta más de 72 bytes.
+    maxLength: { value: 72, message: 'La contraseña no puede superar los 72 caracteres' },
+    validate: notBlank('La contraseña no puede ser solo espacios'),
+  },
+  country: {
+    maxLength: { value: 100, message: 'Máximo 100 caracteres' },
+  },
+  city: {
+    maxLength: { value: 100, message: 'Máximo 100 caracteres' },
   },
 }

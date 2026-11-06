@@ -151,7 +151,8 @@ public class TicketmasterSyncService {
     // La API de descubrimiento no entrega zonas ni precios. Los que se conocen (por ejemplo, de los flyers
     // oficiales de venta) se guardan en ticketmaster-zones.json y se aplican aquí, por id de evento.
     // Ese archivo es la fuente de verdad de esos conciertos: si cambia un precio, la próxima sincronización lo actualiza.
-    private int applyKnownZones() {
+    @Transactional
+    public int applyKnownZones() {
         List<Object> entries;
         try (var in = knownZonesFile.getInputStream()) {
             entries = JsonParserFactory.getJsonParser().parseList(StreamUtils.copyToString(in, StandardCharsets.UTF_8));

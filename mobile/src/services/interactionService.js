@@ -6,6 +6,11 @@ export const interactionService = {
   concertStatus: (concertId, signal) =>
     api.get(`/user-interactions/concerts/${concertId}`, { signal }).then((res) => res.data),
 
+  // GET /user-interactions/my-concerts -> paginado; cada ítem trae { attendanceId, status, reviewed, concert }
+  // Filtros: status (VOY_A_IR o YA_FUI), upcoming, sort, page, size
+  myConcerts: (params, signal) =>
+    api.get('/user-interactions/my-concerts', { params, signal }).then((res) => res.data),
+
   // POST /user-interactions/attendance -> crea o cambia el estado (VOY_A_IR o YA_FUI)
   setAttendance: (concertId, status) =>
     api.post('/user-interactions/attendance', { concertId, status }).then((res) => res.data),
