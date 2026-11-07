@@ -14,6 +14,8 @@ public interface FavoriteConcertRepository extends JpaRepository<FavoriteConcert
 
     void deleteByUser_IdAndConcert_Id(Long userId, Long concertId);
 
+    void deleteByConcert_Id(Long concertId);
+
     // Trae concierto, artista y venue en una sola consulta
     @EntityGraph(attributePaths = {"concert", "concert.artist", "concert.venue"})
     Page<FavoriteConcert> findByUser_Id(Long userId, Pageable pageable);

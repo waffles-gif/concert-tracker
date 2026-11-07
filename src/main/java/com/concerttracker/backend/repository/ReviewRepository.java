@@ -20,6 +20,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByConcert_Id(Long concertId);
 
+    void deleteByConcert_Id(Long concertId);
+
     // Trae usuario, concierto y artista junto con la reseña para no hacer una consulta extra por cada fila
     @EntityGraph(attributePaths = {"user", "concert", "concert.artist"})
     Page<Review> findByConcert_Id(Long concertId, Pageable pageable);
