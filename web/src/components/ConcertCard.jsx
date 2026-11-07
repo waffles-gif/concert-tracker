@@ -1,7 +1,7 @@
 import { CalendarDays, MapPin, Ticket } from 'lucide-react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import { formatDateTime, formatPrice } from '../utils/format'
+import { formatDateTime, formatPrice, formatPriceOrLink } from '../utils/format'
 import DemoBadge from './DemoBadge'
 
 export default function ConcertCard({ concert, footer = null }) {
@@ -38,7 +38,7 @@ export default function ConcertCard({ concert, footer = null }) {
           </li>
           <li className="flex items-start gap-2">
             <Ticket size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
-            <span>{hasPrice ? `Desde ${formatPrice(concert.ticketPrice)}` : formatPrice(concert.ticketPrice)}</span>
+            <span>{hasPrice ? `Desde ${formatPrice(concert.ticketPrice)}` : formatPriceOrLink(null, concert.ticketUrl)}</span>
           </li>
         </ul>
 

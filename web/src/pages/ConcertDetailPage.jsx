@@ -9,7 +9,7 @@ import ReviewList from '../components/ReviewList'
 import Spinner from '../components/Spinner'
 import { useFetch } from '../hooks/useFetch'
 import { concertService } from '../services/concertService'
-import { formatDateTime, formatPrice } from '../utils/format'
+import { formatDateTime, formatPrice, formatPriceOrLink } from '../utils/format'
 
 function InfoRow({ icon: Icon, children }) {
   return (
@@ -115,7 +115,11 @@ export default function ConcertDetailPage() {
               <InfoRow icon={Users}>Capacidad: {venue.capacity.toLocaleString('es-PE')} personas</InfoRow>
             )}
             <InfoRow icon={Ticket}>
-              {zones.length > 0 ? <>Desde {formatPrice(concert.ticketPrice)}</> : formatPrice(concert.ticketPrice)}
+              {zones.length > 0 ? (
+                <>Desde {formatPrice(concert.ticketPrice)}</>
+              ) : (
+                formatPriceOrLink(concert.ticketPrice, concert.ticketUrl)
+              )}
             </InfoRow>
           </ul>
 

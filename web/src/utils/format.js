@@ -25,6 +25,12 @@ export function formatDate(isoDate) {
   return shortDateFormatter.format(new Date(isoDate))
 }
 
+// Sin precio pero con enlace de compra, se invita a verlo en Ticketmaster; sin ninguno de los dos, "por confirmar"
+export function formatPriceOrLink(value, ticketUrl) {
+  if (value == null && ticketUrl) return 'Ver precio en Ticketmaster'
+  return formatPrice(value)
+}
+
 // Sin precio (los conciertos importados de Ticketmaster no lo traen) se muestra "Precio por confirmar"
 export function formatPrice(value) {
   if (value == null) return 'Precio por confirmar'
