@@ -5,13 +5,40 @@ import { tokenStore } from './tokenStore'
 
 const API_URL = `${import.meta.env.VITE_API_URL ?? 'http://localhost:8080'}/api/v1`
 
+// El backend gratuito (Render) se duerme y puede tardar más de 100 s en despertar: el timeout debe ser largo.
+// Si una petición pasa de WAKE_NOTICE_MS sin responder, se avisa al usuario que el servidor está despertando.
+const REQUEST_TIMEOUT_MS = 150000
+const WAKE_NOTICE_MS = 8000
+
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 15000,
+  timeout: REQUEST_TIMEOUT_MS,
 })
 
 // Cliente sin interceptores para pedir el refresh (evita bucles infinitos).
-const bareClient = axios.create({ baseURL: API_URL, timeout: 15000 })
+const bareClient = axios.create({ baseURL: API_URL, timeout: REQUEST_TIMEOUT_MS })
+
+// Cuántas peticiones lentas hay a la vez: el aviso se quita cuando ya no queda ninguna.
+let slowRequests = 0
+
+function watchSlow(config) {
+  config._wakeTimer = setTimeout(() => {
+    config._slow = true
+    slowRequests += 1
+    toast.loading('El servidor está despertando, puede tardar hasta un minuto…', { id: 'server-waking' })
+  }, WAKE_NOTICE_MS)
+}
+
+// La petición terminó (bien, mal o cancelada): se apaga su temporizador y, si ya no hay lentas, el aviso.
+function settle(config) {
+  if (!config) return
+  clearTimeout(config._wakeTimer)
+  if (config._slow) {
+    config._slow = false
+    slowRequests = Math.max(slowRequests - 1, 0)
+    if (slowRequests === 0) toast.dismiss('server-waking')
+  }
+}
 
 const isAuthEndpoint = (url = '') => url.startsWith('/auth/')
 
@@ -75,14 +102,19 @@ api.interceptors.request.use((config) => {
   if (token && !isAuthEndpoint(config.url)) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  watchSlow(config)
   return config
 })
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    settle(response.config)
+    return response
+  },
   async (error) => {
     const original = error.config
     const status = error.response?.status
+    settle(original)
 
     if (status === 401 && original && !original._retry && !isAuthEndpoint(original.url)) {
       original._retry = true
