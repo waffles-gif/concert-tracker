@@ -1,6 +1,51 @@
-# Concert Tracker - Backend
+# Concert Tracker
 
-API REST para descubrir conciertos por artista, ciudad o fecha, registrar la asistencia personal y compartir reseñas. Hecha con Spring Boot, Spring Security (JWT) y PostgreSQL.
+Plataforma para descubrir conciertos en Lima por artista, ciudad o fecha, registrar la asistencia personal, seguir artistas y compartir reseñas. Este repositorio tiene tres partes:
+
+| Parte | Carpeta | Tecnología | Documentación |
+|---|---|---|---|
+| **API REST** | raíz | Spring Boot 4, Spring Security (JWT), PostgreSQL | este archivo |
+| **Web** | [`web/`](web/) | React 19, Vite, Tailwind CSS | [web/README.md](web/README.md) |
+| **App móvil** | [`mobile/`](mobile/) | React Native con Expo | [mobile/README.md](mobile/README.md) |
+
+## URLs públicas
+
+| | URL |
+|---|---|
+| Web (Vercel, HTTPS) | https://concert-tracker-one.vercel.app |
+| API (Render, HTTPS) | https://concert-tracker-6sbr.onrender.com |
+| Colección de Postman | [`postman_collection.json`](postman_collection.json) |
+
+> El backend corre en el plan gratuito de Render y se duerme tras un rato sin uso: la primera petición puede tardar hasta ~2 minutos. Conviene abrir la URL de la API unos minutos antes de una demo.
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+    Web["Web<br/>React + Vite<br/>(Vercel)"] -->|"HTTPS · JSON · JWT"| API["API REST<br/>Spring Boot<br/>(Render)"]
+    Mobile["App móvil<br/>React Native + Expo"] -->|"HTTPS · JSON · JWT"| API
+    API -->|JDBC| DB[("PostgreSQL<br/>(Neon)")]
+    API -->|"sincronización de conciertos"| TM["Ticketmaster<br/>Discovery API"]
+```
+
+La web y la app móvil consumen la misma API. Los conciertos reales los importa el backend desde Ticketmaster; los precios y zonas se completan a mano en `ticketmaster-zones.json`, porque Ticketmaster no los entrega.
+
+## Cómo correr el backend en local
+
+Necesitas **Java 21** y **Docker**.
+
+```bash
+# 1. Base de datos
+docker run -d --name concert-db -p 5432:5432 \
+  -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=concert_tracker postgres:17
+
+# 2. API en http://localhost:8080 (con datos de demostración)
+DEMO_DATA_ENABLED=true ./mvnw spring-boot:run
+```
+
+Hibernate crea las tablas (`ddl-auto=update`). Con `DEMO_DATA_ENABLED=true` se cargan conciertos, artistas y el usuario `demo@concerttracker.com` (contraseña `Demo12345`, configurable con `DEMO_USER_PASSWORD`). La raíz `http://localhost:8080/` responde 401: es normal, la API no tiene página.
+
+Para la web, sigue [web/README.md](web/README.md); para la app móvil, [mobile/README.md](mobile/README.md).
 
 ## Funcionalidades Implementadas
 
@@ -16,6 +61,12 @@ Los `GET` son públicos. Crear, actualizar y eliminar requiere un token de un us
 
 Ejemplo: `/api/v1/concerts/search?artist=bad&city=Lima&upcoming=true`
 
+**Paginación y orden:** los listados de conciertos, artistas y reseñas usan `page` (desde 0), `size` y `sort` (por ejemplo `?page=0&size=25&sort=date,asc`) y responden `{content, totalElements, totalPages, ...}`. Por defecto `size=10`; conciertos se ordenan por `date` y artistas por `name`.
+
+**Filtro de artistas por género:** `GET /api/v1/artists?genreId=3` devuelve solo los artistas de ese género, también paginado.
+
+**Zonas y precios:** el detalle de un concierto incluye sus `zones` (nombre y precio por zona), `ticketUrl` (enlace oficial de compra) y `ticketPrice` (precio de referencia). Un concierto sin precio publicado se muestra como "Precio por confirmar".
+
 ### Interacción del usuario (Attendance, Review, Follow)
 
 Todos requieren token. El usuario se obtiene del JWT (`SecurityUtils.getCurrentUserId()`), así que nadie puede actuar en nombre de otro.
@@ -26,6 +77,16 @@ Todos requieren token. El usuario se obtiene del JWT (`SecurityUtils.getCurrentU
 | GET | `/api/v1/user-interactions/attendance/history` | Historial, con filtro opcional `?status=` |
 | POST | `/api/v1/user-interactions/reviews` | Crea una reseña (`rating` de 1 a 5) |
 | POST | `/api/v1/user-interactions/follow` | Sigue a un artista |
+| DELETE | `/api/v1/user-interactions/follow/{artistId}` | Deja de seguir a un artista |
+| PUT / DELETE | `/api/v1/user-interactions/favorites/{concertId}` | Agrega o quita un concierto de favoritos |
+| GET | `/api/v1/user-interactions/my-concerts` | Conciertos del usuario según su asistencia |
+| GET | `/api/v1/user-interactions/concerts/{concertId}` | Estado del usuario en un concierto (asistencia, favorito, reseña) |
+| GET / PUT | `/api/v1/users/me` | Consulta o actualiza el perfil propio |
+| GET | `/api/v1/users/me/follows` | Artistas que sigue |
+| GET | `/api/v1/users/me/favorite-concerts` | Conciertos favoritos (paginado) |
+| GET | `/api/v1/users/me/reviews` | Sus reseñas (paginado) |
+
+**Reseñas públicas:** `GET /api/v1/concerts/{id}/reviews` (reseñas de un concierto, paginado) y `GET /api/v1/reviews/recent` (feed de reseñas recientes) no requieren token.
 
 **Reglas de negocio** (en el service):
 
@@ -37,6 +98,18 @@ Todos requieren token. El usuario se obtiene del JWT (`SecurityUtils.getCurrentU
 ### Manejo de errores
 
 `GlobalExceptionHandler` devuelve siempre `{timestamp, status, error, message, path}`. Los códigos son: 400 (validación), 401 (sin token o token inválido), 403 (rol insuficiente), 404 (no existe), 409 (duplicado o conflicto) y 500 (error interno).
+
+### Integración con Ticketmaster
+
+El backend importa conciertos de música de Perú desde la **Ticketmaster Discovery API**. Como esa API no entrega precios, estos se completan con el archivo `src/main/resources/ticketmaster-zones.json` (zonas, precios y enlace de compra por concierto), que la sincronización aplica sobre los conciertos importados. Los conciertos pasados reales salen de `past-concerts.json`.
+
+- **Manual:** `POST /api/v1/admin/sync/ticketmaster` (solo `ADMIN`). Es idempotente: se puede ejecutar varias veces.
+- **Automática:** apagada por defecto. Con `TICKETMASTER_SYNC_ENABLED=true` corre al arrancar y todos los días a las 3:00 a. m.
+- Requiere `TICKETMASTER_API_KEY`.
+
+### Datos de demostración
+
+Con `DEMO_DATA_ENABLED=true`, `DemoDataLoader` carga artistas, recintos, conciertos, un usuario demo y usuarios de ejemplo con asistencias y reseñas. Está desactivado por defecto y no duplica datos si se vuelve a arrancar.
 
 ## Seguridad Implementada
 
@@ -70,11 +143,13 @@ Las tareas secundarias, como enviar un correo, no hacen esperar al usuario. El s
 
 | Entidad | Campos principales |
 |---|---|
-| **User** | `name`, `email` (único), `password` (BCrypt), `role`, `country`, `city`, `createdAt` |
+| **User** | `name`, `email` (único), `password` (BCrypt), `role`, `country`, `city`, `bio`, `createdAt` |
 | **Genre** | `name` (único) |
 | **Venue** | `name`, `city`, `country`, `address`, `capacity` |
 | **Artist** | `name` (único), `country`, `description`, `imageUrl` |
-| **Concert** | `title`, `date`, `ticketPrice`, `imageUrl`, `artist`, `venue` |
+| **Concert** | `title`, `date`, `ticketPrice`, `imageUrl`, `ticketUrl`, `externalId` (único, identifica el origen: Ticketmaster o histórico), `artist`, `venue` |
+| **ConcertZone** | `concert`, `name`, `price` (única por concierto y nombre) |
+| **FavoriteConcert** | `userId`, `concertId`, `createdAt` |
 | **Attendance** | `userId`, `concertId`, `status` (`VOY_A_IR`/`YA_FUI`), fechas |
 | **Review** | `userId`, `concertId`, `rating` (1-5), `comment` |
 | **Follow** | `userId`, `artistId`, `createdAt` |
@@ -82,33 +157,37 @@ Las tareas secundarias, como enviar un correo, no hacen esperar al usuario. El s
 **Relaciones:**
 
 - Venue → Concert y Artist → Concert, de uno a muchos.
+- Concert → ConcertZone, de uno a muchos.
 - Genre ↔ Artist, de muchos a muchos (tabla `artist_genres`).
-- Attendance y Review son intermedias entre User y Concert, y Follow entre User y Artist, con restricción única por par.
+- Attendance, Review y FavoriteConcert son intermedias entre User y Concert, y Follow entre User y Artist, con restricción única por par.
 
 ## Deployment
 
-El backend está desplegado en **AWS** (Learner Lab), con la aplicación y la base de datos en la misma plataforma.
+| Parte | Plataforma | Cómo |
+|---|---|---|
+| API | **Render** (plan gratuito) | Imagen Docker construida desde el [`Dockerfile`](Dockerfile) de la raíz |
+| Base de datos | **Neon** (PostgreSQL) | Hibernate crea las tablas al arrancar |
+| Web | **Vercel** | Root Directory `web`, ver [web/README.md](web/README.md) |
 
 ```
-Cliente ──HTTP :8080──► EC2 (Amazon Linux 2023, Java 21, servicio systemd)
-                              │ JDBC :5432 (red privada)
-                              ▼
-                        RDS PostgreSQL (sin acceso público)
+Web (Vercel) ──HTTPS──►  API Spring Boot (Render)  ──JDBC──►  PostgreSQL (Neon)
+App móvil   ──HTTPS──►        │
+                              └──► Ticketmaster Discovery API
 ```
 
-- **EC2** (`t3.small`) clona este repositorio, compila con `./mvnw` y corre el `.jar` como servicio de systemd, que se reinicia solo.
-- **RDS PostgreSQL** (`db.t4g.micro`) contiene la base `concert_tracker`. Hibernate crea las tablas.
-- **Security Groups:** EC2 abre los puertos 22 y 8080; RDS solo acepta el puerto 5432 desde EC2.
+Para publicar cambios de la API se redespliega el servicio en Render desde `main`. El `Dockerfile` compila con Maven y ejecuta el `.jar` en una imagen liviana; limita el heap porque la instancia gratuita tiene 512 MB.
 
-**Variables de entorno** (en `/etc/concert-tracker.env`, fuera del repositorio):
+**Variables de entorno de la API** (en el panel de Render, nunca en el repositorio):
 
 | Variable | Uso |
 |---|---|
-| `DB_URL` | `jdbc:postgresql://<endpoint-rds>:5432/concert_tracker` |
-| `DB_USERNAME` / `DB_PASSWORD` | Credenciales de RDS |
-| `JWT_SECRET` | Clave de firma, de 32 caracteres o más |
-| `PORT` | Opcional, 8080 por defecto |
+| `DB_URL` | URL JDBC de la base de datos (`jdbc:postgresql://<host>/<base>`) |
+| `DB_USERNAME` / `DB_PASSWORD` | Credenciales de la base de datos |
+| `JWT_SECRET` | Clave de firma de los tokens, de 32 caracteres o más |
+| `CORS_ALLOWED_ORIGINS` | Orígenes permitidos, separados por coma. Debe incluir la URL de la web en Vercel; sin ella el navegador bloquea las peticiones |
+| `TICKETMASTER_API_KEY` | Clave de la Discovery API de Ticketmaster |
+| `TICKETMASTER_SYNC_ENABLED` | `true` para sincronizar al arrancar y a diario (opcional) |
+| `DEMO_DATA_ENABLED` | `true` para cargar los datos de demostración (opcional) |
+| `PORT` | Lo define Render; 8080 por defecto en local |
 
-**Redespliegue desde GitHub:** después de fusionar en `main`, conectarse con EC2 Instance Connect y ejecutar `~/deploy.sh`. El script hace `git pull`, compila y reinicia el servicio. Los logs se revisan con `journalctl -u backend -f`.
-
-**Consideraciones:** las sesiones del Learner Lab duran 4 horas y la IP pública cambia al reiniciar, así que hay que actualizar `base_url` en Postman. A diferencia de Railway, el despliegue no es automático al hacer push y la API se sirve por HTTP.
+**Consideraciones:** al dormirse la instancia gratuita, la primera petición tarda; la web y la app móvil usan un timeout largo y avisan al usuario mientras despierta. Un `GET` a la API sin token en `/` responde 401, es lo esperado.
