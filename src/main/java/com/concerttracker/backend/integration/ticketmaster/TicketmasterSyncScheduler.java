@@ -49,6 +49,7 @@ public class TicketmasterSyncScheduler {
     // Las zonas salen de un archivo nuestro: se aplican aunque Ticketmaster no haya respondido.
     private void applyZonesOnly() {
         try {
+            syncService.removeBrokenConcerts();
             int applied = syncService.applyKnownZones();
             log.info("Zonas aplicadas sin Ticketmaster: {} conciertos actualizados", applied);
         } catch (RuntimeException e) {

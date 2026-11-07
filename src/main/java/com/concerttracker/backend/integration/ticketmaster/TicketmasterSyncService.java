@@ -12,7 +12,10 @@ import com.concerttracker.backend.integration.ticketmaster.TicketmasterDtos.Imag
 import com.concerttracker.backend.integration.ticketmaster.TicketmasterDtos.PriceRange;
 import com.concerttracker.backend.repository.ArtistRepository;
 import com.concerttracker.backend.repository.ConcertRepository;
+import com.concerttracker.backend.repository.AttendanceRepository;
 import com.concerttracker.backend.repository.ConcertZoneRepository;
+import com.concerttracker.backend.repository.FavoriteConcertRepository;
+import com.concerttracker.backend.repository.ReviewRepository;
 import com.concerttracker.backend.repository.GenreRepository;
 import com.concerttracker.backend.repository.VenueRepository;
 import org.slf4j.Logger;
@@ -72,12 +75,21 @@ public class TicketmasterSyncService {
             "Classical", "Clásica");
     private static final Set<String> IGNORED_GENRES = Set.of("Undefined", "Other");
 
+    // Ticketmaster sigue listando estos eventos, pero su página de compra ya no existe.
+    // Se comparan por link: si Ticketmaster les da uno nuevo, vuelven a importarse solos.
+    private static final Set<String> BROKEN_TICKET_URLS = Set.of(
+            "https://www.ticketmaster.pe/event/canta-corazon-jean-paul-strauss-home",
+            "https://www.ticketmaster.pe/event/floor-jansens-venta-general");
+
     private final TicketmasterClient client;
     private final ConcertRepository concertRepository;
     private final ArtistRepository artistRepository;
     private final VenueRepository venueRepository;
     private final GenreRepository genreRepository;
     private final ConcertZoneRepository zoneRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final ReviewRepository reviewRepository;
+    private final FavoriteConcertRepository favoriteConcertRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final String defaultCity;
     private final Resource knownZonesFile;
@@ -88,6 +100,9 @@ public class TicketmasterSyncService {
                                    VenueRepository venueRepository,
                                    GenreRepository genreRepository,
                                    ConcertZoneRepository zoneRepository,
+                                   AttendanceRepository attendanceRepository,
+                                   ReviewRepository reviewRepository,
+                                   FavoriteConcertRepository favoriteConcertRepository,
                                    ApplicationEventPublisher eventPublisher,
                                    @Value("${ticketmaster.default-city:Lima}") String defaultCity,
                                    @Value("classpath:ticketmaster-zones.json") Resource knownZonesFile) {
@@ -97,6 +112,9 @@ public class TicketmasterSyncService {
         this.venueRepository = venueRepository;
         this.genreRepository = genreRepository;
         this.zoneRepository = zoneRepository;
+        this.attendanceRepository = attendanceRepository;
+        this.reviewRepository = reviewRepository;
+        this.favoriteConcertRepository = favoriteConcertRepository;
         this.eventPublisher = eventPublisher;
         this.defaultCity = defaultCity;
         this.knownZonesFile = knownZonesFile;
@@ -119,7 +137,8 @@ public class TicketmasterSyncService {
         int skipped = 0;
         for (Event event : events) {
             LocalDateTime date = startOf(event);
-            if (event.id() == null || event.name() == null || date == null || isCanceled(event)) {
+            if (event.id() == null || event.name() == null || date == null || isCanceled(event)
+                    || BROKEN_TICKET_URLS.contains(event.url())) {
                 skipped++;
                 continue;
             }
@@ -141,11 +160,26 @@ public class TicketmasterSyncService {
             }
         }
 
+        removeBrokenConcerts();
         int zonesUpdated = applyKnownZones();
 
         log.info("Sincronización con Ticketmaster: {} eventos, {} nuevos, {} actualizados, {} omitidos, {} con zonas",
                 events.size(), created, updated, skipped, zonesUpdated);
         return new SyncResult(events.size(), created, updated, skipped, zonesUpdated);
+    }
+
+    // Borra los conciertos que ya se habían importado con un link roto, con todo lo que depende de ellos.
+    @Transactional
+    public void removeBrokenConcerts() {
+        for (Concert concert : concertRepository.findByTicketUrlIn(BROKEN_TICKET_URLS)) {
+            Long id = concert.getId();
+            attendanceRepository.deleteByConcert_Id(id);
+            reviewRepository.deleteByConcert_Id(id);
+            favoriteConcertRepository.deleteByConcert_Id(id);
+            zoneRepository.deleteByConcertId(id);
+            concertRepository.delete(concert);
+            log.info("Concierto quitado por link de compra roto: {}", concert.getTitle());
+        }
     }
 
     // La API de descubrimiento no entrega zonas ni precios. Los que se conocen (por ejemplo, de los flyers
