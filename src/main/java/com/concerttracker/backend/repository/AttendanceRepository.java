@@ -19,6 +19,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
     List<Attendance> findByUser_Id(Long userId);
 
+    void deleteByConcert_Id(Long concertId);
+
     List<Attendance> findByUser_IdAndStatus(Long userId, Attendance.AttendanceStatus status);
 
     // "Mis conciertos": búsqueda paginada con filtros opcionales (estado, próximos/pasados) que trae
