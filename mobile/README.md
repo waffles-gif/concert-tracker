@@ -5,7 +5,7 @@ App en React Native con Expo que consume el backend de este repositorio.
 ## Requisitos
 
 - Node.js 20.19 o superior.
-- La app **Expo Go** en el celular, con el mismo SDK que este proyecto (SDK 57).
+- La app **Expo Go** en el celular, con el mismo SDK que este proyecto (SDK 58).
 - El backend corriendo (en local o en producción).
 
 ## Cómo correrla
@@ -15,52 +15,74 @@ cd mobile
 npm install
 npx expo install --fix   # alinea las versiones con el SDK de Expo
 cp .env.example .env      # en Windows: copy .env.example .env
-npx expo start
+npx expo start --tunnel -c
 ```
 
 Escanea el QR con Expo Go (Android) o con la cámara (iOS).
+
+Usamos el modo `--tunnel` para que el celular se conecte aunque no esté en la misma red que la PC (o si el firewall bloquea la conexión). Si pide instalar `@expo/ngrok`, acepta.
 
 ## Variables de entorno
 
 | Variable | Para qué sirve |
 | --- | --- |
-| `EXPO_PUBLIC_API_URL` | URL del backend sin `/api/v1`. En el celular usa la IP de tu PC, no `localhost`. |
+| `EXPO_PUBLIC_API_URL` | URL del backend sin `/api/v1`. |
+
+Valores posibles:
+
+- **Producción (Render):** `EXPO_PUBLIC_API_URL=https://concert-tracker-6sbr.onrender.com`
+- **Backend local:** la IP de tu PC en la misma red Wi-Fi, por ejemplo `http://192.168.1.50:8080`. En el celular `localhost` es el propio celular, no la PC.
 
 Si cambias el `.env`, reinicia con `npx expo start -c` para limpiar la caché.
 
-## Qué hace hoy
+> Render está en el plan gratis y se apaga cuando no se usa. La primera petición puede tardar 1 o 2 minutos; la app muestra un aviso de "el servidor está despertando" mientras espera.
 
-- **Login y registro** con validación antes de llamar a la API. La sesión se recupera sola al abrir la app.
-- **Tokens en `expo-secure-store`** (cifrados). Si el access token vence, el cliente pide uno nuevo con el refresh token y repite la petición.
-- **Conciertos**: búsqueda por artista con debounce, filtro "Solo próximos", scroll infinito sobre la respuesta paginada (`content`, `page`, `totalPages`), pull-to-refresh y estados de carga, vacío y error con "Reintentar".
-- **Mi perfil**: datos de `GET /users/me` y artistas seguidos de `GET /users/me/follows`, con cierre de sesión.
+## Qué hace la app
+
+- **Login y registro** con validaciones antes de llamar a la API (email válido, contraseña de 8 a 72 caracteres, campos obligatorios). Si el correo ya está registrado, el error sale en el mismo campo. La sesión se recupera sola al abrir la app.
+- **Tokens en `expo-secure-store`** (cifrados). Si el access token vence, el cliente pide uno nuevo con el refresh token y repite la petición; si el refresh ya no sirve, cierra la sesión.
+- **Conciertos**: búsqueda por artista con debounce, filtros "Solo próximos" y "Cerca de mí", scroll infinito sobre la respuesta paginada, pull-to-refresh y estados de carga, vacío y error con "Reintentar".
+- **Cerca de mí (GPS)**: con `expo-location` se obtiene la ubicación, se saca la ciudad y se filtran los conciertos de esa ciudad. Si el GPS devuelve el distrito, se prueba con la provincia y la región.
+- **Detalle del concierto**: datos del concierto, zonas y precios, link para comprar entradas, reseñas de otros usuarios y el clima del día del concierto (Open-Meteo, sin API key).
+- **Interacciones**: marcar "Voy a ir" / "Ya fui", dejar una reseña, guardar en favoritos y seguir al artista.
+- **QR**: cada concierto tiene un QR para compartirlo; desde la pantalla de conciertos se puede escanear con la cámara (`expo-camera`) y abre el detalle.
+- **Historial**: pestañas "Voy a ir", "Ya fui" y "Reseñas" con lo que hizo el usuario.
+- **Mi perfil**: datos de `GET /users/me` y artistas seguidos, con cierre de sesión.
+- **Errores**: mensajes claros cuando no hay conexión o el servidor falla, y un `ErrorBoundary` para que la app no se quede en blanco si algo se rompe.
 
 ## Endpoints que usa
 
 | Pantalla | Endpoint |
 | --- | --- |
 | Login / Registro | `POST /auth/login`, `POST /auth/register`, `POST /auth/refresh` |
-| Conciertos | `GET /concerts/search?artist=&upcoming=&sort=date,asc&page=&size=` |
+| Conciertos | `GET /concerts/search?artist=&city=&upcoming=&sort=date,asc&page=&size=` |
+| Detalle | `GET /concerts/{id}`, `GET /concerts/{id}/reviews`, `GET /user-interactions/concerts/{id}` |
+| Interacciones | `POST /user-interactions/attendance`, `POST /user-interactions/reviews`, `PUT` y `DELETE /user-interactions/favorites/{id}`, `POST /user-interactions/follow`, `DELETE /user-interactions/follow/{id}` |
+| Historial | `GET /user-interactions/my-concerts`, `GET /users/me/reviews` |
 | Mi perfil | `GET /users/me`, `GET /users/me/follows` |
+
+Servicios externos: Open-Meteo (geocoding y pronóstico del clima).
 
 ## Problemas comunes
 
-- **"Network Error" o no carga nada en el celular:** `EXPO_PUBLIC_API_URL` apunta a `localhost`. Usa la IP de tu PC y revisa que el celular esté en la misma red Wi-Fi y que el firewall de Windows deje pasar el puerto 8080.
+- **"No se puede conectar al servidor":** revisa `EXPO_PUBLIC_API_URL`. Si usas Render, espera a que despierte y vuelve a intentar.
+- **El QR de Expo no conecta:** usa `npx expo start --tunnel -c`.
 - **Expo Go dice que el proyecto usa otro SDK:** actualiza Expo Go o, si Expo Go ya pasó a un SDK nuevo, corre `npx expo install expo@latest` y luego `npx expo install --fix`.
+- **"Cerca de mí" no muestra nada:** acepta el permiso de ubicación. Si en tu ciudad no hay conciertos, la app te lo avisa.
 
 ## Estructura
 
 ```
 mobile/
-├── App.js            # proveedores (auth, navegación, toasts)
+├── App.js            # proveedores (auth, navegación, toasts) y ErrorBoundary
 ├── index.js          # punto de entrada de Expo
 └── src/
     ├── screens/      # pantallas (una por ruta)
-    ├── components/   # piezas reutilizables de UI
+    ├── components/   # piezas reutilizables de UI (clima, QR, tarjetas)
     ├── navigation/   # stack de auth + tabs de la app
-    ├── services/     # axios, tokens y llamadas al backend
-    ├── hooks/        # custom hooks (useAuth, useConcerts, ...)
+    ├── services/     # axios, tokens, backend y clima
+    ├── hooks/        # custom hooks (useAuth, useConcerts, useCurrentCity, ...)
     ├── contexts/     # Context API (AuthContext)
-    ├── utils/        # formato, validaciones y errores
+    ├── utils/        # formato, validaciones, QR y errores
     └── theme/        # colores y espaciados
 ```
