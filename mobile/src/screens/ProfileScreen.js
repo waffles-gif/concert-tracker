@@ -1,119 +1,197 @@
+import { Ionicons } from '@expo/vector-icons'
 import { useFocusEffect } from '@react-navigation/native'
-import { useCallback, useRef, useState } from 'react'
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
-import LoadingScreen from '../components/LoadingScreen'
+import PropTypes from 'prop-types'
+import { useCallback, useState } from 'react'
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import ArtistCard from '../components/ArtistCard'
 import PrimaryButton from '../components/PrimaryButton'
 import StateView from '../components/StateView'
 import { useAuth } from '../hooks/useAuth'
+import { useFollows } from '../hooks/useFollows'
 import { userService } from '../services/userService'
 import { colors, radius, spacing } from '../theme'
-import { getErrorMessage } from '../utils/apiError'
+import { MIN_FOLLOWS } from '../utils/onboarding'
 
-// Perfil del usuario logueado: GET /users/me y GET /users/me/follows.
-export default function ProfileScreen() {
-  const { user: sessionUser, logout } = useAuth()
-  const [state, setState] = useState({ profile: null, follows: [], loading: true, refreshing: false, error: null })
+// Perfil del usuario logueado, como en la web: datos y bio (con "Editar perfil"),
+// acceso a favoritos y artistas que sigue (con dejar de seguir sin bajar del mínimo).
+export default function ProfileScreen({ navigation }) {
+  const { user, isAdmin, updateUser, logout } = useAuth()
+  const follows = useFollows()
+  const [favoritesCount, setFavoritesCount] = useState(null)
+  const [refreshing, setRefreshing] = useState(false)
 
-  const loadedRef = useRef(false)
+  // Al volver a la pestaña se actualizan los datos y el número de favoritos.
+  const load = useCallback(async () => {
+    const [me, favorites] = await Promise.allSettled([userService.me(), userService.favoriteConcerts({ size: 1 })])
+    if (me.status === 'fulfilled') updateUser(me.value)
+    if (favorites.status === 'fulfilled') setFavoritesCount(favorites.value.totalElements)
+  }, [updateUser])
 
-  const load = useCallback(async (mode = 'initial') => {
-    setState((prev) => ({ ...prev, loading: mode === 'initial', refreshing: mode === 'refresh', error: null }))
-    try {
-      const [profile, follows] = await Promise.all([userService.me(), userService.follows()])
-      loadedRef.current = true
-      setState({ profile, follows, loading: false, refreshing: false, error: null })
-    } catch (error) {
-      setState((prev) => ({ ...prev, loading: false, refreshing: false, error: getErrorMessage(error) }))
-    }
-  }, [])
-
-  // Se recarga al volver a la pestaña: si seguiste a un artista en el detalle, aquí ya aparece.
   useFocusEffect(
     useCallback(() => {
-      load(loadedRef.current ? 'silent' : 'initial')
+      load()
     }, [load]),
   )
 
-  if (state.loading) return <LoadingScreen message="Cargando tu perfil…" />
+  const onRefresh = async () => {
+    setRefreshing(true)
+    await Promise.all([load(), follows.reload()])
+    setRefreshing(false)
+  }
 
-  // Si /users/me falla, se muestra lo que ya trae la sesión.
-  const profile = state.profile ?? sessionUser
-  const place = [profile?.city, profile?.country].filter(Boolean).join(', ')
-
-  const header = (
-    <View>
-      <View style={styles.card}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{profile?.name?.charAt(0)?.toUpperCase() ?? '?'}</Text>
-        </View>
-        <Text style={styles.name}>{profile?.name}</Text>
-        <Text style={styles.muted}>{profile?.email}</Text>
-        {place ? <Text style={styles.muted}>{place}</Text> : null}
-      </View>
-      {state.error ? (
-        <StateView
-          icon="cloud-offline-outline"
-          title="No pudimos actualizar tu perfil"
-          message={state.error}
-          actionLabel="Reintentar"
-          onAction={() => load()}
-        />
-      ) : (
-        <Text style={styles.section}>Artistas que sigues ({state.follows.length})</Text>
-      )}
-    </View>
-  )
+  const initials = (user?.name ?? '?')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0].toUpperCase())
+    .join('')
+  const place = [user?.city, user?.country].filter(Boolean).join(', ')
+  const atMinimum = !isAdmin && follows.count <= MIN_FOLLOWS
 
   return (
-    <FlatList
+    <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
-      data={state.error ? [] : state.follows}
-      keyExtractor={(item) => String(item.artistId)}
-      renderItem={({ item }) => (
-        <View style={styles.artistRow}>
-          <Text style={styles.artistName}>{item.name}</Text>
-          {item.country ? <Text style={styles.muted}>{item.country}</Text> : null}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      <View style={styles.card}>
+        <View style={styles.cardTop}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initials}</Text>
+          </View>
+          <View style={styles.cardInfo}>
+            <Text style={styles.name}>{user?.name}</Text>
+            <Text style={styles.muted}>{user?.email}</Text>
+            {place ? (
+              <View style={styles.place}>
+                <Ionicons name="location-outline" size={14} color={colors.textMuted} />
+                <Text style={styles.muted}>{place}</Text>
+              </View>
+            ) : null}
+          </View>
         </View>
-      )}
-      ListHeaderComponent={header}
-      ListEmptyComponent={
-        state.error ? null : (
-          <StateView
-            icon="heart-outline"
-            title="Aún no sigues a ningún artista"
-            message="Cuando sigas artistas aparecerán aquí."
-          />
-        )
-      }
-      ListFooterComponent={
-        <View style={styles.logout}>
-          <PrimaryButton title="Cerrar sesión" variant="outline" onPress={logout} />
+
+        <Text style={styles.bioTitle}>Sobre mí</Text>
+        <Text style={user?.bio ? styles.bio : styles.muted}>
+          {user?.bio || 'Aún no escribiste tu bio. Toca "Editar perfil" para contar algo sobre ti.'}
+        </Text>
+
+        <View style={styles.editButton}>
+          <PrimaryButton title="Editar perfil" variant="outline" onPress={() => navigation.navigate('EditProfile')} />
         </View>
-      }
-      refreshControl={<RefreshControl refreshing={state.refreshing} onRefresh={() => load('refresh')} />}
-    />
+      </View>
+
+      <LinkRow
+        icon="heart"
+        iconColor="#f43f5e"
+        label="Mis conciertos favoritos"
+        value={favoritesCount}
+        onPress={() => navigation.navigate('Favorites')}
+      />
+
+      <Text style={styles.section}>
+        Artistas que sigues{follows.loading ? '' : ` (${follows.count})`}
+      </Text>
+      <Text style={styles.sectionHint}>
+        {atMinimum
+          ? `Sigue más artistas para poder dejar de seguir a alguno (el mínimo es ${MIN_FOLLOWS}).`
+          : 'Los artistas de los que quieres enterarte.'}
+      </Text>
+
+      {follows.error && follows.count === 0 ? (
+        <StateView
+          icon="cloud-offline-outline"
+          title="No pudimos cargar tus artistas"
+          message={follows.error}
+          actionLabel="Reintentar"
+          onAction={follows.reload}
+        />
+      ) : null}
+
+      {!follows.loading && !follows.error && follows.count === 0 ? (
+        <StateView
+          icon="mic-outline"
+          title="Aún no sigues a ningún artista"
+          actionLabel="Ver artistas"
+          onAction={() => navigation.navigate('Artists')}
+        />
+      ) : null}
+
+      {(follows.follows ?? []).map((follow) => (
+        <ArtistCard
+          key={follow.artistId}
+          artist={{ id: follow.artistId, name: follow.name, country: follow.country, imageUrl: follow.imageUrl }}
+          followed
+          busy={follows.busyId === follow.artistId}
+          locked={atMinimum}
+          onToggle={follows.toggle}
+        />
+      ))}
+
+      <View style={styles.logout}>
+        <PrimaryButton title="Cerrar sesión" variant="outline" onPress={logout} />
+      </View>
+    </ScrollView>
   )
+}
+
+function LinkRow({ icon, iconColor, label, value, onPress }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.linkRow, pressed && styles.pressed]}
+      accessibilityRole="button"
+    >
+      <Ionicons name={icon} size={20} color={iconColor} />
+      <Text style={styles.linkLabel}>{label}</Text>
+      {value != null ? <Text style={styles.linkValue}>{value}</Text> : null}
+      <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+    </Pressable>
+  )
+}
+
+LinkRow.propTypes = {
+  icon: PropTypes.string.isRequired,
+  iconColor: PropTypes.string,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.number,
+  onPress: PropTypes.func.isRequired,
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg },
-  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.xl, alignItems: 'center' },
+  card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.lg },
+  cardTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  cardInfo: { flex: 1, minWidth: 0 },
   avatar: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.md,
   },
-  avatarText: { fontSize: 26, fontWeight: '700', color: colors.primary },
+  avatarText: { fontSize: 22, fontWeight: '700', color: '#fff' },
   name: { fontSize: 20, fontWeight: '700', color: colors.text },
   muted: { fontSize: 14, color: colors.textMuted, marginTop: 2 },
-  section: { fontSize: 16, fontWeight: '600', color: colors.text, marginTop: spacing.xl, marginBottom: spacing.md },
-  artistRow: { backgroundColor: colors.surface, borderRadius: radius.sm, padding: spacing.md, marginBottom: spacing.sm },
-  artistName: { fontSize: 16, fontWeight: '500', color: colors.text },
+  place: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  bioTitle: { fontSize: 13, fontWeight: '600', color: colors.textMuted, marginTop: spacing.lg },
+  bio: { fontSize: 15, color: colors.text, marginTop: 2 },
+  editButton: { marginTop: spacing.lg },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    marginTop: spacing.lg,
+  },
+  pressed: { backgroundColor: colors.primarySoft },
+  linkLabel: { flex: 1, fontSize: 16, fontWeight: '500', color: colors.text },
+  linkValue: { fontSize: 15, color: colors.textMuted },
+  section: { fontSize: 16, fontWeight: '600', color: colors.text, marginTop: spacing.xl },
+  sectionHint: { fontSize: 13, color: colors.textMuted, marginTop: 2, marginBottom: spacing.md },
   logout: { marginTop: spacing.xl },
 })

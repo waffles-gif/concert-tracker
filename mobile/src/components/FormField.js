@@ -4,13 +4,13 @@ import { StyleSheet, Text, TextInput, View } from 'react-native'
 import { colors, radius, spacing } from '../theme'
 
 // Campo de texto con etiqueta y mensaje de error accesible.
-const FormField = forwardRef(function FormField({ label, error, style, ...inputProps }, ref) {
+const FormField = forwardRef(function FormField({ label, error, style, inputStyle, ...inputProps }, ref) {
   return (
     <View style={[styles.wrapper, style]}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         ref={ref}
-        style={[styles.input, error && styles.inputError]}
+        style={[styles.input, inputStyle, error && styles.inputError]}
         placeholderTextColor={colors.textMuted}
         accessibilityLabel={label}
         {...inputProps}
@@ -28,6 +28,7 @@ FormField.propTypes = {
   label: PropTypes.string.isRequired,
   error: PropTypes.string,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  inputStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 }
 
 export default FormField

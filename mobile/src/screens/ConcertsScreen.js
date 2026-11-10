@@ -150,7 +150,11 @@ export default function ConcertsScreen({ navigation }) {
       data={items}
       keyExtractor={(item) => String(item.id)}
       renderItem={({ item }) => (
-        <ConcertCard concert={item} onPress={() => navigation.navigate('ConcertDetail', { concert: item })} />
+        <ConcertCard
+          concert={item}
+          markPast={!onlyUpcoming}
+          onPress={() => navigation.navigate('ConcertDetail', { concert: item })}
+        />
       )}
       ListHeaderComponent={header}
       ListEmptyComponent={renderEmpty}

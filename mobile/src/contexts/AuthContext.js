@@ -3,7 +3,9 @@ import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { setAuthFailureHandler } from '../services/api'
 import { authService } from '../services/authService'
 import { tokenStorage } from '../services/tokenStorage'
+import { userService } from '../services/userService'
 import { isSessionRejected } from '../utils/apiError'
+import { MIN_FOLLOWS } from '../utils/onboarding'
 
 export const AuthContext = createContext(null)
 
@@ -58,17 +60,52 @@ export function AuthProvider({ children }) {
     setUser(null)
   }, [])
 
+  // Para que el perfil editado se vea en toda la app sin volver a iniciar sesión.
+  const updateUser = useCallback((nextUser) => setUser(nextUser), [])
+
+  // Onboarding (igual que en la web): al entrar, si un usuario que no es admin sigue menos de
+  // MIN_FOLLOWS artistas, primero tiene que elegir géneros y seguir artistas.
+  // `onboarding.userId` evita usar el dato de otro usuario si se cambia de sesión.
+  const userId = user?.id
+  const isAdmin = user?.role === 'ADMIN'
+  const [onboarding, setOnboarding] = useState({ userId: null, needed: null })
+
+  useEffect(() => {
+    if (!userId) return undefined
+    if (isAdmin) {
+      setOnboarding({ userId, needed: false })
+      return undefined
+    }
+    let cancelled = false
+    userService
+      .follows()
+      .then((list) => !cancelled && setOnboarding({ userId, needed: list.length < MIN_FOLLOWS }))
+      // Si no se puede consultar, no se bloquea al usuario.
+      .catch(() => !cancelled && setOnboarding({ userId, needed: false }))
+    return () => {
+      cancelled = true
+    }
+  }, [userId, isAdmin])
+
+  const needed = onboarding.userId === userId ? onboarding.needed : null
+  const finishOnboarding = useCallback(() => setOnboarding((prev) => ({ ...prev, needed: false })), [])
+
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      isAdmin: user?.role === 'ADMIN',
+      isAdmin,
       initializing,
       login,
       register,
       logout,
+      updateUser,
+      // Todavía no sabemos cuántos artistas sigue
+      checkingOnboarding: Boolean(user) && needed === null,
+      needsOnboarding: Boolean(user) && needed === true,
+      finishOnboarding,
     }),
-    [user, initializing, login, register, logout],
+    [user, isAdmin, initializing, login, register, logout, updateUser, needed, finishOnboarding],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

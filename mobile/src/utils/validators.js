@@ -2,6 +2,9 @@
 // así el usuario ve el error antes de llamar a la API.
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// UserUpdateRequest: @Size(max = 300) en la bio.
+export const MAX_BIO = 300
+
 // `required` acepta un texto de puros espacios, pero el @NotBlank del backend no.
 const notBlank = (message) => (value) => value.trim().length > 0 || message
 
@@ -34,5 +37,8 @@ export const rules = {
   },
   city: {
     maxLength: { value: 100, message: 'Máximo 100 caracteres' },
+  },
+  bio: {
+    maxLength: { value: MAX_BIO, message: `La bio no puede superar los ${MAX_BIO} caracteres` },
   },
 }

@@ -15,15 +15,28 @@ function Row({ icon, children }) {
 
 Row.propTypes = { icon: PropTypes.string.isRequired, children: PropTypes.node }
 
-export default function ConcertCard({ concert, onPress, note }) {
+// `markPast`: muestra la etiqueta "Ya pasó" si la fecha del concierto ya pasó
+// (útil en listas donde se mezclan próximos y pasados, como "Cerca de mí").
+export default function ConcertCard({ concert, onPress, note, markPast = false }) {
+  const isPast = markPast && concert.date && new Date(concert.date) < new Date()
+
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${concert.title}, ${concert.artistName}`}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      accessibilityLabel={`${concert.title}, ${concert.artistName}${isPast ? ', ya pasó' : ''}`}
+      style={({ pressed }) => [styles.card, isPast && styles.past, pressed && styles.pressed]}
     >
-      <Text style={styles.artist}>{concert.artistName}</Text>
+      <View style={styles.top}>
+        <Text style={styles.artist} numberOfLines={1}>
+          {concert.artistName}
+        </Text>
+        {isPast ? (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>Ya pasó</Text>
+          </View>
+        ) : null}
+      </View>
       <Text style={styles.title}>{concert.title}</Text>
       <View style={styles.rows}>
         <Row icon="calendar-outline">{formatDateTime(concert.date)}</Row>
@@ -48,6 +61,7 @@ ConcertCard.propTypes = {
   }).isRequired,
   onPress: PropTypes.func,
   note: PropTypes.string,
+  markPast: PropTypes.bool,
 }
 
 const styles = StyleSheet.create({
@@ -60,6 +74,10 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   pressed: { backgroundColor: colors.primarySoft },
+  past: { opacity: 0.75 },
+  top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  badge: { backgroundColor: '#e2e8f0', borderRadius: 999, paddingHorizontal: spacing.sm, paddingVertical: 2 },
+  badgeText: { fontSize: 11, fontWeight: '700', color: colors.textMuted },
   artist: { fontSize: 12, fontWeight: '700', color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.5 },
   title: { fontSize: 17, fontWeight: '600', color: colors.text, marginTop: spacing.xs },
   rows: { marginTop: spacing.md, gap: spacing.sm },

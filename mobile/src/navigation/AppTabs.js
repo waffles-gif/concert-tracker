@@ -1,15 +1,19 @@
 import { Ionicons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Pressable } from 'react-native'
+import ArtistsScreen from '../screens/ArtistsScreen'
 import ConcertsScreen from '../screens/ConcertsScreen'
 import HistoryScreen from '../screens/HistoryScreen'
+import HomeScreen from '../screens/HomeScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import { colors, spacing } from '../theme'
 
 const Tab = createBottomTabNavigator()
 
 const ICONS = {
+  Home: ['home', 'home-outline'],
   Concerts: ['musical-notes', 'musical-notes-outline'],
+  Artists: ['mic', 'mic-outline'],
   History: ['time', 'time-outline'],
   Profile: ['person', 'person-outline'],
 }
@@ -25,6 +29,7 @@ export default function AppTabs() {
         ),
       })}
     >
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Inicio' }} />
       <Tab.Screen
         name="Concerts"
         component={ConcertsScreen}
@@ -43,6 +48,7 @@ export default function AppTabs() {
           ),
         })}
       />
+      <Tab.Screen name="Artists" component={ArtistsScreen} options={{ title: 'Artistas' }} />
       <Tab.Screen name="History" component={HistoryScreen} options={{ title: 'Historial' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Mi perfil' }} />
     </Tab.Navigator>
