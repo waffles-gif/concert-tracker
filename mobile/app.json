@@ -11,7 +11,15 @@
       "bundleIdentifier": "pe.edu.utec.concerttracker"
     },
     "android": {
-      "package": "pe.edu.utec.concerttracker"
+      "package": "pe.edu.utec.concerttracker",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "plugins": [
       "expo-font",
@@ -30,6 +38,18 @@
           "locationWhenInUsePermission": "Usamos tu ubicación para mostrarte los conciertos de tu ciudad."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c2b7344f-7a2c-4c2d-a0eb-f23c24cd1730"
+      }
+    },
+    "owner": "mafilacrafiwafi",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/c2b7344f-7a2c-4c2d-a0eb-f23c24cd1730"
+    }
   }
 }
