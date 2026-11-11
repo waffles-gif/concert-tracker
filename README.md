@@ -23,7 +23,10 @@ El porcentaje indica el cumplimiento de las responsabilidades de cada integrante
 |---|---|
 | Web (Vercel, HTTPS) | https://concert-tracker-one.vercel.app |
 | API (Render, HTTPS) | https://concert-tracker-6sbr.onrender.com |
+| App móvil (Expo, EAS Update) | https://expo.dev/accounts/mafilacrafiwafi/projects/concert-tracker |
 | Colección de Postman | [`postman_collection.json`](postman_collection.json) |
+
+> Para abrir la app en el celular: instalar **Expo Go**, entrar al link de la app móvil → **Updates** → la actualización más reciente → **Preview** y escanear el QR con la cámara (iOS) o desde Expo Go (Android). Más detalles en [`mobile/README.md`](mobile/README.md).
 
 > El backend corre en el plan gratuito de Render y se duerme tras un rato sin uso: la primera petición puede tardar hasta ~2 minutos. Conviene abrir la URL de la API unos minutos antes de una demo.
 
