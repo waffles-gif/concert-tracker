@@ -25,6 +25,7 @@ Cliente web de **Concert Tracker**, una plataforma para descubrir conciertos en 
 | `/conciertos` | Listado con búsqueda, filtros, orden y paginación | Público |
 | `/conciertos/:id` | Detalle: zonas y precios, reseñas, asistencia | Público (acciones con sesión) |
 | `/artistas` | Artistas con filtro por género y paginación | Público |
+| `/artistas/:id` | Artista con sus conciertos en pestañas "Próximos" y "Ya ocurrieron" | Público |
 | `/login`, `/register` | Inicio de sesión y registro | Público |
 | `/onboarding` | Elegir géneros y seguir artistas | Con sesión |
 | `/mis-conciertos` | Historial de asistencias ("Voy a ir" y "Ya fui") | Con sesión |
@@ -122,6 +123,8 @@ src/
 - **Paginación en la URL:** `?page=`, `?size=` (10, 25, 50 o 100) y los filtros viven en la query string, así se pueden compartir, recargar y usar el botón atrás. Se muestra "Mostrando X–Y de Z".
 - **Búsqueda con debounce** (`useDebounce`) para no llamar a la API en cada tecla.
 - **Formularios** con React Hook Form y validaciones en cliente alineadas con las del backend.
+- **Confirmaciones:** dejar de seguir a un artista o quitar un favorito pide confirmación con un cuadro modal (`ConfirmDialog`, basado en `<dialog>`), para evitar acciones accidentales.
+- **Modo oscuro:** botón en la barra superior; respeta el tema del sistema la primera vez y guarda la elección. Se resuelve con la clase `dark` en `<html>` y un tema definido en `index.css`, sin repetir estilos en cada componente.
 - **Accesibilidad básica:** enlace "saltar al contenido", etiquetas en los campos, roles `alert` en los errores, foco visible y respeto a `prefers-reduced-motion`.
 
 ## Deploy (Vercel)
