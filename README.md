@@ -32,6 +32,10 @@ El porcentaje indica el cumplimiento de las responsabilidades de cada integrante
 
 ## Arquitectura
 
+![Diagrama de arquitectura de Concert Tracker](docs/diagrama-arquitectura.png)
+
+También está en [SVG](docs/diagrama-arquitectura.svg). Versión resumida:
+
 ```mermaid
 flowchart LR
     Web["Web<br/>React + Vite<br/>(Vercel)"] -->|"HTTPS · JSON · JWT"| API["API REST<br/>Spring Boot<br/>(Render)"]
