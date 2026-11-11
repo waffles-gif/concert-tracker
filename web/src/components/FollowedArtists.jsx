@@ -85,6 +85,7 @@ export default function FollowedArtists() {
               busy={busyId === follow.artistId}
               lockedMessage={lockedMessage}
               onToggle={handleUnfollow}
+              linkTo={`/artistas/${follow.artistId}`}
             />
           ))}
         </div>
