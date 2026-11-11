@@ -3,6 +3,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import ArtistCard from '../components/ArtistCard'
+import ConfirmDialog from '../components/ConfirmDialog'
 import Pagination from '../components/Pagination'
 import Spinner from '../components/Spinner'
 import { useAuth } from '../hooks/useAuth'
@@ -29,6 +30,7 @@ export default function ArtistsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [overrides, setOverrides] = useState({}) // { [artistId]: true | false } cambios hechos en esta pantalla
   const [busyId, setBusyId] = useState(null)
+  const [pendingUnfollow, setPendingUnfollow] = useState(null)
 
   // Género, página y tamaño viven en la URL (se pueden compartir y sobreviven a recargas)
   const genreId = searchParams.get('genero') ?? ''
@@ -81,6 +83,12 @@ export default function ArtistsPage() {
         setBusyId(null)
       }
     })
+  }
+
+  // Seguir es inmediato; dejar de seguir pide confirmación
+  const handleToggle = (artist) => {
+    if (isAuthenticated && followedIds.has(artist.id)) setPendingUnfollow(artist)
+    else toggleFollow(artist)
   }
 
   const items = artists.data?.content ?? []
@@ -149,7 +157,7 @@ export default function ArtistsPage() {
                 followed={isAuthenticated && followedIds.has(artist.id)}
                 busy={waitingFollows || busyId === artist.id}
                 lockedMessage={isAuthenticated ? lockedMessage : undefined}
-                onToggle={toggleFollow}
+                onToggle={handleToggle}
                 linkTo={`/artistas/${artist.id}`}
               />
             ))}
@@ -167,6 +175,19 @@ export default function ArtistsPage() {
           />
         )}
       </div>
+
+      <ConfirmDialog
+        open={pendingUnfollow !== null}
+        title={`¿Dejar de seguir a ${pendingUnfollow?.name ?? ''}?`}
+        message="Ya no lo verás entre los artistas que sigues. Puedes volver a seguirlo cuando quieras."
+        confirmLabel="Dejar de seguir"
+        onCancel={() => setPendingUnfollow(null)}
+        onConfirm={() => {
+          const artist = pendingUnfollow
+          setPendingUnfollow(null)
+          toggleFollow(artist)
+        }}
+      />
     </section>
   )
 }

@@ -10,6 +10,7 @@ import { userService } from '../services/userService'
 import { getErrorMessage } from '../utils/apiError'
 import { MIN_FOLLOWS } from '../utils/onboarding'
 import ArtistCard from './ArtistCard'
+import ConfirmDialog from './ConfirmDialog'
 import Spinner from './Spinner'
 
 // Artistas que sigue el usuario, con opción de dejar de seguir (sin bajar del mínimo del onboarding)
@@ -17,6 +18,7 @@ export default function FollowedArtists() {
   const { isAdmin, updateFollowCount } = useAuth()
   const { data: follows, loading, error, retry } = useFetch('profile-follows', (signal) => userService.follows(signal))
   const [busyId, setBusyId] = useState(null)
+  const [pendingUnfollow, setPendingUnfollow] = useState(null)
 
   const once = useSingleFlight()
 
@@ -84,12 +86,25 @@ export default function FollowedArtists() {
               followed
               busy={busyId === follow.artistId}
               lockedMessage={lockedMessage}
-              onToggle={handleUnfollow}
+              onToggle={setPendingUnfollow}
               linkTo={`/artistas/${follow.artistId}`}
             />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={pendingUnfollow !== null}
+        title={`¿Dejar de seguir a ${pendingUnfollow?.name ?? ''}?`}
+        message="Ya no verás a este artista entre los que sigues. Puedes volver a seguirlo cuando quieras."
+        confirmLabel="Dejar de seguir"
+        onCancel={() => setPendingUnfollow(null)}
+        onConfirm={() => {
+          const artist = pendingUnfollow
+          setPendingUnfollow(null)
+          handleUnfollow(artist)
+        }}
+      />
     </section>
   )
 }

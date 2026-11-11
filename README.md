@@ -8,6 +8,15 @@ Plataforma para descubrir conciertos en Lima por artista, ciudad o fecha, regist
 | **Web** | [`web/`](web/) | React 19, Vite, Tailwind CSS | [web/README.md](web/README.md) |
 | **App móvil** | [`mobile/`](mobile/) | React Native con Expo | [mobile/README.md](mobile/README.md) |
 
+## Participación del equipo
+
+El porcentaje indica el cumplimiento de las responsabilidades de cada integrante (100 % = cumplimiento completo).
+
+| Integrante | Principales aportes | Participación |
+|---|---|---|
+| **Tamara Iberico Gomez** | **Web completa** (React + Vite + Tailwind): cliente axios con interceptores y refresh de token, rutas privadas, listados con búsqueda, filtros y paginación, onboarding, dashboard, perfil, página de artista, manejo de errores, `AbortController`, reintentos y UI/UX. **Backend:** paginación, filtro de artistas por género, integración con Ticketmaster, zonas y precios, favoritos y datos de demostración. **Deploy de la web** en Vercel, README de la web y arquitectura general. | 100 % |
+| **Maria Fernanda Carbajal** | **App móvil completa** (React Native + Expo): autenticación con `expo-secure-store`, detalle de concierto, asistencia, reseñas, clima, filtro "cerca de mí", escaneo de QR e historial. **Backend:** `users/me`, seguimiento de artistas y reseñas por concierto con su feed. **Deploy del backend** en Render (Docker) y publicación de la app con EAS Update. | 100 % |
+
 ## URLs públicas
 
 | | URL |
