@@ -43,10 +43,12 @@ La app también se publica con **EAS Update**, así se puede abrir en Expo Go si
 
 ```bash
 npx eas-cli@latest login                 # una sola vez, con la cuenta de Expo
-npx eas-cli@latest update --branch main --message "descripcion del cambio"
+npx eas-cli@latest update --branch main --environment production --message "descripcion del cambio"
 ```
 
-Luego, en expo.dev → proyecto → **Updates**, se abre la última actualización y se escanea su QR con Expo Go. El `.env` tiene que apuntar a Render antes de publicar, porque la URL queda guardada en lo que se sube. En `app.json`, `runtimeVersion` usa la política `sdkVersion` para que Expo Go pueda abrir la actualización.
+Luego, en expo.dev → proyecto → **Updates**, se abre la última actualización y se escanea su QR con Expo Go.
+
+Al publicar con `--environment production`, EAS **no lee el `.env`**: la URL del backend sale de la variable `EXPO_PUBLIC_API_URL` guardada en expo.dev → proyecto → **Environment variables** (entorno Production, apuntando a Render). Si esa variable no existe, la app publicada intenta conectarse a `localhost` y no carga nada. En `app.json`, `runtimeVersion` usa la política `sdkVersion` para que Expo Go pueda abrir la actualización.
 
 ## Qué hace la app
 
