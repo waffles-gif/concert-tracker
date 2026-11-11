@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types'
 import { StyleSheet, Text, View } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { concertQrValue } from '../utils/concertQr'
 
 // QR del concierto para compartirlo: otra persona lo escanea desde la app y llega a este detalle.
 export default function ConcertQrCard({ concertId }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <View style={styles.card} accessibilityLabel="Código QR de este concierto">
       <QRCode value={concertQrValue(concertId)} size={160} color={colors.text} backgroundColor={colors.surface} />
@@ -18,7 +21,7 @@ ConcertQrCard.propTypes = {
   concertId: PropTypes.number.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   card: {
     alignItems: 'center',
     backgroundColor: colors.surface,

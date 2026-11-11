@@ -5,11 +5,13 @@ import FormField from '../components/FormField'
 import FormScreen from '../components/FormScreen'
 import PrimaryButton from '../components/PrimaryButton'
 import { useAuth } from '../hooks/useAuth'
-import { colors, spacing } from '../theme'
+import { spacing } from '../theme'
+import { useThemedStyles } from '../theme/ThemeContext'
 import { getErrorMessage } from '../utils/apiError'
 import { rules } from '../utils/validators'
 
 export default function RegisterScreen({ navigation }) {
+  const styles = useThemedStyles(makeStyles)
   const { register } = useAuth()
   const [serverError, setServerError] = useState(null)
   const {
@@ -115,7 +117,7 @@ export default function RegisterScreen({ navigation }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.md },
   half: { flex: 1 },
   link: { marginTop: spacing.xl, alignItems: 'center', paddingVertical: spacing.sm },

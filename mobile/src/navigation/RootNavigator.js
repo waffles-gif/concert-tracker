@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import LoadingScreen from '../components/LoadingScreen'
 import { useAuth } from '../hooks/useAuth'
+import ArtistDetailScreen from '../screens/ArtistDetailScreen'
 import ConcertDetailScreen from '../screens/ConcertDetailScreen'
 import EditProfileScreen from '../screens/EditProfileScreen'
 import FavoritesScreen from '../screens/FavoritesScreen'
@@ -8,7 +9,7 @@ import LoginScreen from '../screens/LoginScreen'
 import OnboardingScreen from '../screens/OnboardingScreen'
 import RegisterScreen from '../screens/RegisterScreen'
 import ScanQrScreen from '../screens/ScanQrScreen'
-import { colors } from '../theme'
+import { useTheme } from '../theme/ThemeContext'
 import AppTabs from './AppTabs'
 
 const Stack = createNativeStackNavigator()
@@ -19,6 +20,7 @@ const Stack = createNativeStackNavigator()
 // Al cambiar `user` en AuthContext, React Navigation cambia de grupo solo (no hace falta navigate).
 // - Con sesión pero siguiendo menos de 3 artistas: primero el onboarding (como en la web).
 export default function RootNavigator() {
+  const { colors } = useTheme()
   const { isAuthenticated, initializing, checkingOnboarding, needsOnboarding } = useAuth()
 
   if (initializing) return <LoadingScreen message="Recuperando tu sesión…" />
@@ -35,6 +37,7 @@ export default function RootNavigator() {
           <Stack.Screen name="ScanQr" component={ScanQrScreen} options={{ title: 'Escanear QR' }} />
           <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Editar perfil' }} />
           <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ title: 'Mis favoritos' }} />
+          <Stack.Screen name="ArtistDetail" component={ArtistDetailScreen} options={{ title: 'Artista' }} />
         </>
       ) : (
         <Stack.Group screenOptions={{ headerShown: false, animationTypeForReplace: 'pop' }}>

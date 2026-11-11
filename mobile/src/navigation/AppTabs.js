@@ -6,7 +6,8 @@ import ConcertsScreen from '../screens/ConcertsScreen'
 import HistoryScreen from '../screens/HistoryScreen'
 import HomeScreen from '../screens/HomeScreen'
 import ProfileScreen from '../screens/ProfileScreen'
-import { colors, spacing } from '../theme'
+import { spacing } from '../theme'
+import { useTheme } from '../theme/ThemeContext'
 
 const Tab = createBottomTabNavigator()
 
@@ -19,6 +20,7 @@ const ICONS = {
 }
 
 export default function AppTabs() {
+  const { colors } = useTheme()
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

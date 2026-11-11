@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types'
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useThemedStyles } from '../theme/ThemeContext'
 
 // Contenedor para formularios: evita que el teclado tape los campos y muestra el error del servidor.
 export default function FormScreen({ title, subtitle, serverError, children }) {
+  const styles = useThemedStyles(makeStyles)
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -32,7 +34,7 @@ FormScreen.propTypes = {
   children: PropTypes.node.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   content: { flexGrow: 1, justifyContent: 'center', padding: spacing.xl },

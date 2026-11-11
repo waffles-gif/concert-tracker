@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types'
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 
 // Botón principal. Mientras `loading` está activo queda deshabilitado (evita doble envío).
 export default function PrimaryButton({ title, onPress, loading = false, disabled = false, variant = 'solid' }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const isDisabled = disabled || loading
   const outline = variant === 'outline'
 
@@ -37,7 +40,7 @@ PrimaryButton.propTypes = {
   variant: PropTypes.oneOf(['solid', 'outline']),
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   base: {
     minHeight: 48,
     borderRadius: radius.sm,

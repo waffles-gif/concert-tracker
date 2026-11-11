@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useThemedStyles } from '../theme/ThemeContext'
 import { getErrorMessage } from '../utils/apiError'
 import FormField from './FormField'
 import PrimaryButton from './PrimaryButton'
@@ -14,6 +15,7 @@ const MAX_COMMENT = 1000
 // Formulario de reseña: estrellas del 1 al 5 (obligatorio) y comentario opcional.
 // Valida antes de llamar a la API y muestra el error del servidor dentro del formulario (por ejemplo 409).
 export default function ReviewForm({ onSubmit }) {
+  const styles = useThemedStyles(makeStyles)
   const [serverError, setServerError] = useState(null)
   const {
     control,
@@ -97,7 +99,7 @@ ReviewForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,

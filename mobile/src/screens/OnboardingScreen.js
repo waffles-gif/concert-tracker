@@ -9,7 +9,8 @@ import StateView from '../components/StateView'
 import { useAuth } from '../hooks/useAuth'
 import { useFollows } from '../hooks/useFollows'
 import { artistService } from '../services/artistService'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { getErrorMessage } from '../utils/apiError'
 import { MIN_FOLLOWS } from '../utils/onboarding'
 import { GenreChip } from './ArtistsScreen'
@@ -28,6 +29,8 @@ async function fetchArtists(genreIds, signal) {
 
 // Onboarding: paso 1 elegir géneros, paso 2 seguir al menos MIN_FOLLOWS artistas.
 export default function OnboardingScreen() {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const { user, finishOnboarding, logout } = useAuth()
   const follows = useFollows({ toast: false })
   const [step, setStep] = useState(1)
@@ -186,7 +189,7 @@ export default function OnboardingScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, flexGrow: 1 },
   step: { fontSize: 13, fontWeight: '700', color: colors.primary, marginTop: spacing.md },

@@ -8,9 +8,12 @@ import StateView from '../components/StateView'
 import { useConcerts } from '../hooks/useConcerts'
 import { useCurrentCity } from '../hooks/useCurrentCity'
 import { useDebounce } from '../hooks/useDebounce'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 
 export default function ConcertsScreen({ navigation }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const [search, setSearch] = useState('')
   const [onlyUpcoming, setOnlyUpcoming] = useState(true)
   // Ciudad sacada del GPS con "Cerca de mí"; null cuando el filtro está apagado.
@@ -34,7 +37,11 @@ export default function ConcertsScreen({ navigation }) {
       return
     }
     try {
-      setNearCity(await locate())
+      const { city, fromProfile, reason } = await locate()
+      setNearCity(city)
+      if (fromProfile) {
+        Toast.show({ type: 'info', text1: `Usamos tu ciudad del perfil: ${city}`, text2: reason })
+      }
     } catch (err) {
       Toast.show({ type: 'error', text1: 'Cerca de mí', text2: err.message })
     }
@@ -169,7 +176,7 @@ export default function ConcertsScreen({ navigation }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, flexGrow: 1 },
   header: { marginBottom: spacing.lg },

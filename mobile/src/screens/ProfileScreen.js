@@ -2,19 +2,22 @@ import { Ionicons } from '@expo/vector-icons'
 import { useFocusEffect } from '@react-navigation/native'
 import PropTypes from 'prop-types'
 import { useCallback, useState } from 'react'
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 import ArtistCard from '../components/ArtistCard'
 import PrimaryButton from '../components/PrimaryButton'
 import StateView from '../components/StateView'
 import { useAuth } from '../hooks/useAuth'
 import { useFollows } from '../hooks/useFollows'
 import { userService } from '../services/userService'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { MIN_FOLLOWS } from '../utils/onboarding'
 
 // Perfil del usuario logueado, como en la web: datos y bio (con "Editar perfil"),
 // acceso a favoritos y artistas que sigue (con dejar de seguir sin bajar del mínimo).
 export default function ProfileScreen({ navigation }) {
+  const { colors, isDark, toggleTheme } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const { user, isAdmin, updateUser, logout } = useAuth()
   const follows = useFollows()
   const [favoritesCount, setFavoritesCount] = useState(null)
@@ -89,6 +92,18 @@ export default function ProfileScreen({ navigation }) {
         onPress={() => navigation.navigate('Favorites')}
       />
 
+      <View style={styles.linkRow}>
+        <Ionicons name={isDark ? 'moon' : 'moon-outline'} size={20} color={colors.primary} />
+        <Text style={styles.linkLabel}>Modo oscuro</Text>
+        <Switch
+          value={isDark}
+          onValueChange={toggleTheme}
+          trackColor={{ true: colors.primary, false: colors.border }}
+          thumbColor="#ffffff"
+          accessibilityLabel="Modo oscuro"
+        />
+      </View>
+
       <Text style={styles.section}>
         Artistas que sigues{follows.loading ? '' : ` (${follows.count})`}
       </Text>
@@ -125,6 +140,7 @@ export default function ProfileScreen({ navigation }) {
           busy={follows.busyId === follow.artistId}
           locked={atMinimum}
           onToggle={follows.toggle}
+          onPress={() => navigation.navigate('ArtistDetail', { artist: { id: follow.artistId, name: follow.name } })}
         />
       ))}
 
@@ -136,6 +152,8 @@ export default function ProfileScreen({ navigation }) {
 }
 
 function LinkRow({ icon, iconColor, label, value, onPress }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <Pressable
       onPress={onPress}
@@ -158,7 +176,7 @@ LinkRow.propTypes = {
   onPress: PropTypes.func.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg },
   card: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.lg },

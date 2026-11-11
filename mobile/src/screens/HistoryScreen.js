@@ -9,7 +9,8 @@ import StateView from '../components/StateView'
 import { usePagedHistory } from '../hooks/usePagedHistory'
 import { interactionService } from '../services/interactionService'
 import { userService } from '../services/userService'
-import { colors, spacing } from '../theme'
+import { spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 
 const TopTab = createMaterialTopTabNavigator()
 
@@ -22,6 +23,8 @@ const fetchAttended = (params, signal) =>
 
 // Parte común de las tres pestañas: scroll infinito, pull-to-refresh y estados de carga, vacío y error.
 function HistoryList({ list, keyExtractor, renderItem, emptyIcon, emptyTitle, emptyMessage }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const { items, loading, loadingMore, refreshing, error, loadMore, refresh, retry } = list
 
   if (loading && items.length === 0) return <LoadingScreen message="Cargando tu historial…" />
@@ -146,6 +149,7 @@ function ReviewsTab() {
 
 // Historial personal con pestañas superiores: GET /user-interactions/my-concerts y GET /users/me/reviews.
 export default function HistoryScreen() {
+  const { colors } = useTheme()
   return (
     <TopTab.Navigator
       screenOptions={{
@@ -163,7 +167,7 @@ export default function HistoryScreen() {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, flexGrow: 1 },
   footer: { paddingVertical: spacing.lg, alignItems: 'center' },

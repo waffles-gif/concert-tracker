@@ -6,12 +6,14 @@ import FormField from '../components/FormField'
 import PrimaryButton from '../components/PrimaryButton'
 import { useAuth } from '../hooks/useAuth'
 import { userService } from '../services/userService'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useThemedStyles } from '../theme/ThemeContext'
 import { getErrorMessage } from '../utils/apiError'
 import { MAX_BIO, rules } from '../utils/validators'
 
 // Editar nombre, país, ciudad y bio (PUT /users/me), igual que el formulario del perfil de la web.
 export default function EditProfileScreen({ navigation }) {
+  const styles = useThemedStyles(makeStyles)
   const { user, updateUser } = useAuth()
   const [serverError, setServerError] = useState(null)
   const {
@@ -112,7 +114,7 @@ export default function EditProfileScreen({ navigation }) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   flex: { flex: 1 },
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg },

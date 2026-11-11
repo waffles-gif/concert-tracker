@@ -8,11 +8,14 @@ import { useAuth } from '../hooks/useAuth'
 import { useFollows } from '../hooks/useFollows'
 import { usePagedList } from '../hooks/usePagedList'
 import { artistService } from '../services/artistService'
-import { colors, spacing } from '../theme'
+import { spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { MIN_FOLLOWS } from '../utils/onboarding'
 
 // Artistas de la A a la Z con filtro por género y botón de seguir (como la página "Artistas" de la web).
-export default function ArtistsScreen() {
+export default function ArtistsScreen({ navigation }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const { isAdmin } = useAuth()
   const [genreId, setGenreId] = useState(null)
   const [genres, setGenres] = useState([])
@@ -110,6 +113,7 @@ export default function ArtistsScreen() {
           busy={follows.loading || follows.busyId === item.id}
           locked={locked}
           onToggle={follows.toggle}
+          onPress={() => navigation.navigate('ArtistDetail', { artist: { id: item.id, name: item.name } })}
         />
       )}
       ListHeaderComponent={header}
@@ -127,6 +131,7 @@ export default function ArtistsScreen() {
 }
 
 export function GenreChip({ label, active, onPress }) {
+  const styles = useThemedStyles(makeStyles)
   return (
     <Pressable
       onPress={onPress}
@@ -145,7 +150,7 @@ GenreChip.propTypes = {
   onPress: PropTypes.func.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, flexGrow: 1 },
   header: { marginBottom: spacing.md },

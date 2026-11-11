@@ -10,12 +10,15 @@ import StateView from '../components/StateView'
 import { usePagedList } from '../hooks/usePagedList'
 import { interactionService } from '../services/interactionService'
 import { userService } from '../services/userService'
-import { colors, spacing } from '../theme'
+import { spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { getErrorMessage } from '../utils/apiError'
 import { formatDate } from '../utils/format'
 
 // "Mis conciertos favoritos" (GET /users/me/favorite-concerts), como en el perfil de la web.
 export default function FavoritesScreen({ navigation }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const { items, loading, loadingMore, refreshing, error, hasMore, loadMore, refresh, retry } = usePagedList(
     userService.favoriteConcerts,
     {},
@@ -94,6 +97,8 @@ export default function FavoritesScreen({ navigation }) {
 }
 
 function RemoveFavoriteButton({ concertId, onRemoved }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const [removing, setRemoving] = useState(false)
 
   const remove = async () => {
@@ -128,7 +133,7 @@ RemoveFavoriteButton.propTypes = {
   onRemoved: PropTypes.func.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, flexGrow: 1 },
   remove: {

@@ -1,10 +1,13 @@
 import { Ionicons } from '@expo/vector-icons'
 import PropTypes from 'prop-types'
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 
 // Botón tipo "píldora" que se marca cuando está activo.
 function ChoiceButton({ icon, activeIcon, label, active, loading, disabled, onPress }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <Pressable
       onPress={onPress}
@@ -53,6 +56,7 @@ export default function ConcertActions({
   onToggleFavorite,
   onToggleFollow,
 }) {
+  const styles = useThemedStyles(makeStyles)
   const attendance = isPast
     ? { status: 'YA_FUI', label: 'Ya fui', icon: 'checkmark-circle-outline', activeIcon: 'checkmark-circle' }
     : { status: 'VOY_A_IR', label: 'Voy a ir', icon: 'calendar-outline', activeIcon: 'calendar' }
@@ -110,7 +114,7 @@ ConcertActions.propTypes = {
   onToggleFollow: PropTypes.func.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
