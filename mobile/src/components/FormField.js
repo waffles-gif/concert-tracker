@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types'
 import { forwardRef } from 'react'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 
 // Campo de texto con etiqueta y mensaje de error accesible.
 const FormField = forwardRef(function FormField({ label, error, style, inputStyle, ...inputProps }, ref) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <View style={[styles.wrapper, style]}>
       <Text style={styles.label}>{label}</Text>
@@ -33,7 +36,7 @@ FormField.propTypes = {
 
 export default FormField
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   wrapper: { marginBottom: spacing.lg },
   label: { fontSize: 14, fontWeight: '600', color: colors.text, marginBottom: spacing.xs },
   input: {

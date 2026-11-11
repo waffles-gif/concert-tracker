@@ -10,7 +10,8 @@ import { concertService } from '../services/concertService'
 import { interactionService } from '../services/interactionService'
 import { reviewService } from '../services/reviewService'
 import { userService } from '../services/userService'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { getErrorMessage } from '../utils/apiError'
 
 // Cada sección se carga por separado: si una falla, las demás se siguen mostrando.
@@ -29,6 +30,7 @@ const emptyData = Object.fromEntries(Object.keys(SECTIONS).map((key) => [key, { 
 // Inicio (como el dashboard de la web): resumen personal, tus próximos conciertos,
 // próximos de la plataforma y las últimas reseñas de todos.
 export default function HomeScreen({ navigation }) {
+  const styles = useThemedStyles(makeStyles)
   const { user } = useAuth()
   const [sections, setSections] = useState(emptyData)
   const [refreshing, setRefreshing] = useState(false)
@@ -154,6 +156,8 @@ export default function HomeScreen({ navigation }) {
 }
 
 function StatTile({ icon, label, value, onPress }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <Pressable
       onPress={onPress}
@@ -176,6 +180,7 @@ StatTile.propTypes = {
 }
 
 function SectionTitle({ title, onSeeAll }) {
+  const styles = useThemedStyles(makeStyles)
   return (
     <View style={styles.sectionHeader}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -191,6 +196,8 @@ function SectionTitle({ title, onSeeAll }) {
 SectionTitle.propTypes = { title: PropTypes.string.isRequired, onSeeAll: PropTypes.func }
 
 function Section({ loading, error, onRetry, children }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   if (loading) return <ActivityIndicator style={styles.spinner} color={colors.primary} />
   if (error) {
     return (
@@ -211,6 +218,7 @@ Section.propTypes = {
 }
 
 function EmptyBox({ text, actionLabel, onAction }) {
+  const styles = useThemedStyles(makeStyles)
   return (
     <View style={styles.emptyBox}>
       <Text style={styles.muted}>{text}</Text>
@@ -225,7 +233,7 @@ function EmptyBox({ text, actionLabel, onAction }) {
 
 EmptyBox.propTypes = { text: PropTypes.string.isRequired, actionLabel: PropTypes.string, onAction: PropTypes.func }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   hello: { fontSize: 24, fontWeight: '700', color: colors.text },

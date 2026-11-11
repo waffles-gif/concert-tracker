@@ -1,10 +1,13 @@
 import { Ionicons } from '@expo/vector-icons'
 import PropTypes from 'prop-types'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { formatDateTime, formatPlace, formatPrice } from '../utils/format'
 
 function Row({ icon, children }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <View style={styles.row}>
       <Ionicons name={icon} size={16} color={colors.textMuted} style={styles.icon} />
@@ -18,6 +21,7 @@ Row.propTypes = { icon: PropTypes.string.isRequired, children: PropTypes.node }
 // `markPast`: muestra la etiqueta "Ya pasó" si la fecha del concierto ya pasó
 // (útil en listas donde se mezclan próximos y pasados, como "Cerca de mí").
 export default function ConcertCard({ concert, onPress, note, markPast = false }) {
+  const styles = useThemedStyles(makeStyles)
   const isPast = markPast && concert.date && new Date(concert.date) < new Date()
 
   return (
@@ -64,7 +68,7 @@ ConcertCard.propTypes = {
   markPast: PropTypes.bool,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
@@ -76,7 +80,7 @@ const styles = StyleSheet.create({
   pressed: { backgroundColor: colors.primarySoft },
   past: { opacity: 0.75 },
   top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
-  badge: { backgroundColor: '#e2e8f0', borderRadius: 999, paddingHorizontal: spacing.sm, paddingVertical: 2 },
+  badge: { backgroundColor: colors.badge, borderRadius: 999, paddingHorizontal: spacing.sm, paddingVertical: 2 },
   badgeText: { fontSize: 11, fontWeight: '700', color: colors.textMuted },
   artist: { fontSize: 12, fontWeight: '700', color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.5 },
   title: { fontSize: 17, fontWeight: '600', color: colors.text, marginTop: spacing.xs },

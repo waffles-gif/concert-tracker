@@ -69,6 +69,31 @@ function rejectWith(error, config) {
   return Promise.reject(error)
 }
 
+// Reintento automático: solo para GET (repetirlas no cambia nada en el servidor) y solo con
+// errores que suelen arreglarse solos: sin conexión, timeout o 502/503/504 (Render despertando).
+const MAX_RETRIES = 2
+const RETRY_STATUSES = [502, 503, 504]
+
+function shouldRetry(error, config) {
+  if (!config || axios.isCancel(error) || config.signal?.aborted) return false
+  if ((config.method ?? 'get').toLowerCase() !== 'get') return false
+  if ((config._retryCount ?? 0) >= MAX_RETRIES) return false
+  const status = error.response?.status
+  return !error.response || RETRY_STATUSES.includes(status)
+}
+
+// Espera 1 s antes del primer reintento y 2 s antes del segundo; se corta si cancelan la petición.
+function waitBeforeRetry(config) {
+  const delay = 1000 * 2 ** (config._retryCount - 1)
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, delay)
+    config.signal?.addEventListener?.('abort', () => {
+      clearTimeout(timer)
+      reject(new axios.CanceledError())
+    })
+  })
+}
+
 // Request: agrega el Bearer token guardado en SecureStore.
 api.interceptors.request.use(async (config) => {
   if (!isAuthEndpoint(config.url)) {
@@ -108,6 +133,16 @@ api.interceptors.response.use(
         await tokenStorage.clear()
         onAuthFailure()
       }
+    }
+
+    if (shouldRetry(error, original)) {
+      original._retryCount = (original._retryCount ?? 0) + 1
+      try {
+        await waitBeforeRetry(original)
+      } catch (canceled) {
+        return rejectWith(canceled, original)
+      }
+      return api(original)
     }
 
     return rejectWith(error, original)

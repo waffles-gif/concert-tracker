@@ -58,13 +58,16 @@ Tiene las mismas funciones que la web. Pestañas: **Inicio · Conciertos · Arti
 - **Inicio**: resumen con cuántos conciertos tiene en "Voy a ir" y "Ya fui", favoritos y artistas que sigue; sus próximos conciertos, los próximos de la plataforma y las últimas reseñas de todos.
 - **Conciertos**: búsqueda por artista con debounce, filtros "Solo próximos" y "Cerca de mí", scroll infinito sobre la respuesta paginada, pull-to-refresh y estados de carga, vacío y error con "Reintentar". Si se ven conciertos pasados, tienen la etiqueta "Ya pasó".
 - **Artistas**: lista de la A a la Z con filtro por género y botón de seguir / dejar de seguir.
+- **Detalle de artista**: al tocar un artista (en Artistas, en tu perfil o en el detalle de un concierto) se ven sus datos y sus conciertos en dos pestañas, "Próximos" y "Ya ocurrieron".
+- **Modo oscuro**: sigue el tema del celular y se puede cambiar desde Perfil; la elección queda guardada.
 - **Cerca de mí (GPS)**: con `expo-location` se obtiene la ubicación, se saca la ciudad y se filtran los conciertos de esa ciudad. Si el GPS devuelve el distrito, se prueba con la provincia y la región.
 - **Detalle del concierto**: datos del concierto, zonas y precios, link para comprar entradas, reseñas de otros usuarios y el clima del día del concierto (Open-Meteo, sin API key).
 - **Interacciones**: marcar "Voy a ir" / "Ya fui", dejar una reseña, guardar en favoritos y seguir al artista.
 - **QR**: cada concierto tiene un QR para compartirlo; desde la pantalla de conciertos se puede escanear con la cámara (`expo-camera`) y abre el detalle.
 - **Historial**: pestañas "Voy a ir", "Ya fui" y "Reseñas" con lo que hizo el usuario.
 - **Perfil**: datos y bio, **Editar perfil** (nombre, país, ciudad y bio de hasta 300 caracteres), **Mis favoritos** (con "Quitar") y artistas que sigue, con cierre de sesión.
-- **Errores**: mensajes claros cuando no hay conexión o el servidor falla, y un `ErrorBoundary` para que la app no se quede en blanco si algo se rompe.
+- **Errores**: mensajes claros cuando no hay conexión o el servidor falla, y un `ErrorBoundary` para que la app no se quede en blanco si algo se rompe. Las peticiones GET que fallan por red, timeout o 502/503/504 se reintentan solas hasta 2 veces (1 s y 2 s de espera).
+- **Fallbacks de sensores**: si el GPS no está disponible, "Cerca de mí" usa la ciudad del perfil y lo avisa; si no hay cámara o permiso, el escáner ofrece buscar el concierto en la lista.
 
 ## Endpoints que usa
 
@@ -74,6 +77,7 @@ Tiene las mismas funciones que la web. Pestañas: **Inicio · Conciertos · Arti
 | Inicio | `GET /user-interactions/my-concerts`, `GET /users/me/favorite-concerts`, `GET /users/me/follows`, `GET /concerts/search`, `GET /reviews/recent` |
 | Conciertos | `GET /concerts/search?artist=&city=&upcoming=&sort=date,asc&page=&size=` |
 | Artistas / Onboarding | `GET /artists?genreId=&sort=name,asc&page=&size=`, `GET /genres` |
+| Detalle de artista | `GET /artists/{id}`, `GET /artists/{id}/concerts` |
 | Detalle | `GET /concerts/{id}`, `GET /concerts/{id}/reviews`, `GET /user-interactions/concerts/{id}` |
 | Interacciones | `POST /user-interactions/attendance`, `POST /user-interactions/reviews`, `PUT` y `DELETE /user-interactions/favorites/{id}`, `POST /user-interactions/follow`, `DELETE /user-interactions/follow/{id}` |
 | Historial | `GET /user-interactions/my-concerts`, `GET /users/me/reviews` |
@@ -103,5 +107,5 @@ mobile/
     ├── hooks/        # custom hooks (useAuth, usePagedList, useFollows, useCurrentCity, ...)
     ├── contexts/     # Context API (AuthContext)
     ├── utils/        # formato, validaciones, QR y errores
-    └── theme/        # colores y espaciados
+    └── theme/        # colores claro/oscuro, espaciados y ThemeContext
 ```

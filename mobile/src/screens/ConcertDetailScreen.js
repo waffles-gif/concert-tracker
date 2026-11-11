@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
-import { ActivityIndicator, Image, Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, Linking, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import ConcertActions from '../components/ConcertActions'
 import ConcertQrCard from '../components/ConcertQrCard'
@@ -13,10 +13,13 @@ import WeatherCard from '../components/WeatherCard'
 import { useConcertDetail } from '../hooks/useConcertDetail'
 import { useConcertInteractions } from '../hooks/useConcertInteractions'
 import { useConcertWeather } from '../hooks/useConcertWeather'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import { formatDateTime, formatPrice } from '../utils/format'
 
 function InfoRow({ icon, label, children }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   return (
     <View style={styles.infoRow}>
       <Ionicons name={icon} size={20} color={colors.primary} style={styles.infoIcon} />
@@ -42,6 +45,8 @@ async function openTicketUrl(url) {
 // Detalle de concierto: GET /concerts/{id} (artista, venue, precio) y GET /concerts/{id}/reviews.
 // Llega desde el listado con el concierto en los params, así el título se ve mientras carga.
 export default function ConcertDetailScreen({ route, navigation }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   const preview = route.params?.concert
   const {
     concert,
@@ -197,12 +202,19 @@ export default function ConcertDetailScreen({ route, navigation }) {
       <ConcertQrCard concertId={concert.id} />
 
       <Text style={styles.sectionTitle}>Artista</Text>
-      <View style={styles.card}>
+      <Pressable
+        style={styles.card}
+        disabled={!artist?.id}
+        onPress={() => navigation.navigate('ArtistDetail', { artist: { id: artist.id, name: artist.name } })}
+        accessibilityRole="link"
+        accessibilityLabel={`Ver conciertos de ${artist?.name ?? 'este artista'}`}
+      >
         <Text style={styles.value}>{artist?.name}</Text>
         {artist?.country ? <Text style={styles.muted}>{artist.country}</Text> : null}
         {genres ? <Text style={styles.muted}>{genres}</Text> : null}
         {artist?.description ? <Text style={styles.description}>{artist.description}</Text> : null}
-      </View>
+        {artist?.id ? <Text style={styles.link}>Ver todos sus conciertos ›</Text> : null}
+      </Pressable>
 
       <Text style={styles.sectionTitle}>Reseñas{reviewsTotal ? ` (${reviewsTotal})` : ''}</Text>
       {canReview ? <ReviewForm onSubmit={handleReview} /> : null}
@@ -242,7 +254,7 @@ ConcertDetailScreen.propTypes = {
   navigation: PropTypes.shape({ setOptions: PropTypes.func.isRequired }).isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, paddingBottom: spacing.xxl },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
@@ -285,6 +297,7 @@ const styles = StyleSheet.create({
   value: { fontSize: 16, color: colors.text, marginTop: 2 },
   muted: { fontSize: 14, color: colors.textMuted },
   description: { fontSize: 14, color: colors.text, marginTop: spacing.xs, lineHeight: 20 },
+  link: { fontSize: 14, fontWeight: '600', color: colors.primary, marginTop: spacing.sm },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.text, marginTop: spacing.xl, marginBottom: spacing.md },
   inlineError: {
     backgroundColor: colors.dangerSoft,

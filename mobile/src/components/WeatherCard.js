@@ -2,7 +2,8 @@ import { Ionicons } from '@expo/vector-icons'
 import PropTypes from 'prop-types'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { describeWeather } from '../services/weatherService'
-import { colors, radius, spacing } from '../theme'
+import { radius, spacing } from '../theme'
+import { useTheme, useThemedStyles } from '../theme/ThemeContext'
 import PrimaryButton from './PrimaryButton'
 
 const round = (value) => (value == null ? '—' : Math.round(value))
@@ -10,6 +11,8 @@ const round = (value) => (value == null ? '—' : Math.round(value))
 // Tarjeta del clima: pronóstico si el concierto es pronto, lo que hizo si ya pasó,
 // o un aviso si todavía falta mucho para tener pronóstico.
 export default function WeatherCard({ weather, loading, error, onRetry }) {
+  const { colors } = useTheme()
+  const styles = useThemedStyles(makeStyles)
   if (loading && !weather) {
     return (
       <View style={styles.card}>
@@ -84,7 +87,7 @@ WeatherCard.propTypes = {
   onRetry: PropTypes.func.isRequired,
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors) => StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
