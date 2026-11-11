@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Modo oscuro: se activa agregando la clase "dark" a <html> (ver hooks/useTheme.js) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
@@ -14,4 +17,85 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * Tema oscuro. En lugar de repetir dark: en cada componente, se invierte la escala "slate"
+ * (fondos, bordes y textos) y se ajustan los pocos colores claros que quedan (tarjetas blancas,
+ * avisos y chips de color). Los botones de color (bg-indigo-600 text-white, etc.) no cambian.
+ */
+.dark {
+  color-scheme: dark;
+
+  --color-slate-50: #0f172a;
+  --color-slate-100: #1e293b;
+  --color-slate-200: #334155;
+  --color-slate-300: #475569;
+  --color-slate-400: #64748b;
+  --color-slate-500: #94a3b8;
+  --color-slate-600: #cbd5e1;
+  --color-slate-700: #e2e8f0;
+  --color-slate-800: #f1f5f9;
+  --color-slate-900: #f8fafc;
+}
+
+.dark .bg-white {
+  background-color: var(--color-slate-100);
+}
+
+.dark .bg-indigo-50,
+.dark .bg-indigo-50\/50 {
+  background-color: rgb(99 102 241 / 0.16);
+}
+
+.dark .bg-indigo-100 {
+  background-color: rgb(99 102 241 / 0.28);
+}
+
+.dark .border-indigo-100 {
+  border-color: rgb(99 102 241 / 0.3);
+}
+
+.dark .bg-red-50 {
+  background-color: rgb(239 68 68 / 0.14);
+}
+
+.dark .bg-rose-50,
+.dark .hover\:bg-rose-100:hover {
+  background-color: rgb(244 63 94 / 0.16);
+}
+
+.dark .border-rose-200 {
+  border-color: rgb(244 63 94 / 0.35);
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgb(16 185 129 / 0.16);
+}
+
+.dark .bg-amber-100 {
+  background-color: rgb(245 158 11 / 0.2);
+}
+
+.dark .text-indigo-600,
+.dark .hover\:text-indigo-600:hover {
+  color: #818cf8;
+}
+
+.dark .text-indigo-700 {
+  color: #a5b4fc;
+}
+
+.dark .text-red-600,
+.dark .text-red-700 {
+  color: #fca5a5;
+}
+
+.dark .text-emerald-700 {
+  color: #6ee7b7;
+}
+
+.dark .text-amber-700,
+.dark .text-amber-800 {
+  color: #fcd34d;
 }
