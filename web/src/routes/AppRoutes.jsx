@@ -8,6 +8,7 @@ const HomePage = lazy(() => import('../pages/HomePage'))
 const ConcertsPage = lazy(() => import('../pages/ConcertsPage'))
 const ConcertDetailPage = lazy(() => import('../pages/ConcertDetailPage'))
 const ArtistsPage = lazy(() => import('../pages/ArtistsPage'))
+const ArtistDetailPage = lazy(() => import('../pages/ArtistDetailPage'))
 const LoginPage = lazy(() => import('../pages/LoginPage'))
 const RegisterPage = lazy(() => import('../pages/RegisterPage'))
 const OnboardingPage = lazy(() => import('../pages/OnboardingPage'))
@@ -23,6 +24,7 @@ export default function AppRoutes() {
         <Route path="conciertos" element={<ConcertsPage />} />
         <Route path="conciertos/:id" element={<ConcertDetailPage />} />
         <Route path="artistas" element={<ArtistsPage />} />
+        <Route path="artistas/:id" element={<ArtistDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 

@@ -1,9 +1,10 @@
 import { Check, Plus } from 'lucide-react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 // Tarjeta de artista con botón de seguir / dejar de seguir (controlado desde afuera)
 // `lockedMessage`: si se pasa y el artista está seguido, no se puede dejar de seguir (se muestra como ayuda)
-export default function ArtistCard({ artist, followed, busy, lockedMessage, onToggle }) {
+export default function ArtistCard({ artist, followed, busy, lockedMessage, onToggle, linkTo = undefined }) {
   const initial = artist.name.charAt(0).toUpperCase()
 
   return (
@@ -20,7 +21,15 @@ export default function ArtistCard({ artist, followed, busy, lockedMessage, onTo
       )}
 
       <div className="min-w-0 flex-1">
-        <h3 className="truncate font-semibold">{artist.name}</h3>
+        <h3 className="truncate font-semibold">
+          {linkTo ? (
+            <Link to={linkTo} className="rounded hover:text-indigo-600 hover:underline">
+              {artist.name}
+            </Link>
+          ) : (
+            artist.name
+          )}
+        </h3>
         <p className="truncate text-xs text-slate-500">
           {[artist.country, ...(artist.genres ?? []).map((genre) => genre.name)].filter(Boolean).join(' · ') || '—'}
         </p>
@@ -58,4 +67,5 @@ ArtistCard.propTypes = {
   busy: PropTypes.bool,
   lockedMessage: PropTypes.string,
   onToggle: PropTypes.func.isRequired,
+  linkTo: PropTypes.string,
 }

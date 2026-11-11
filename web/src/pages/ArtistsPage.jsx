@@ -150,6 +150,7 @@ export default function ArtistsPage() {
                 busy={waitingFollows || busyId === artist.id}
                 lockedMessage={isAuthenticated ? lockedMessage : undefined}
                 onToggle={toggleFollow}
+                linkTo={`/artistas/${artist.id}`}
               />
             ))}
           </div>
