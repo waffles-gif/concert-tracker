@@ -5,6 +5,7 @@ import { useForm, useWatch } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import ConcertCard from '../components/ConcertCard'
+import ConfirmDialog from '../components/ConfirmDialog'
 import FollowedArtists from '../components/FollowedArtists'
 import MyReviews from '../components/MyReviews'
 import FormField from '../components/FormField'
@@ -109,10 +110,11 @@ EditProfileForm.propTypes = {
 
 function RemoveFavoriteButton({ concertId, onRemoved }) {
   const [removing, setRemoving] = useState(false)
+  const [confirming, setConfirming] = useState(false)
 
   const once = useSingleFlight()
 
-  const handleClick = () =>
+  const handleRemove = () =>
     once(async () => {
       setRemoving(true)
       try {
@@ -126,14 +128,27 @@ function RemoveFavoriteButton({ concertId, onRemoved }) {
     })
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={removing}
-      className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-rose-600 disabled:opacity-60"
-    >
-      <HeartOff size={14} aria-hidden="true" /> {removing ? 'Quitando…' : 'Quitar'}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => setConfirming(true)}
+        disabled={removing}
+        className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-rose-600 disabled:opacity-60"
+      >
+        <HeartOff size={14} aria-hidden="true" /> {removing ? 'Quitando…' : 'Quitar'}
+      </button>
+      <ConfirmDialog
+        open={confirming}
+        title="¿Quitar de tus favoritos?"
+        message="El concierto dejará de aparecer en tu lista de favoritos. Puedes agregarlo de nuevo desde su detalle."
+        confirmLabel="Quitar"
+        onCancel={() => setConfirming(false)}
+        onConfirm={() => {
+          setConfirming(false)
+          handleRemove()
+        }}
+      />
+    </>
   )
 }
 
