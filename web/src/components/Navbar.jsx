@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import logo from '../assets/logo.webp'
 import { useAuth } from '../hooks/useAuth'
+import ThemeToggle from './ThemeToggle'
 
 const linkClass = ({ isActive }) =>
   `rounded-md px-3 py-1.5 text-sm font-medium transition ${
@@ -20,7 +21,7 @@ export default function Navbar() {
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-3">
         <Link to="/" aria-label="Concert Tracker, ir al inicio" className="-my-2 flex items-center">
-          <img src={logo} alt="Concert Tracker" className="h-14 w-auto" />
+          <img src={logo} alt="Concert Tracker" className="h-14 w-auto dark:rounded-lg dark:bg-white dark:px-2" />
         </Link>
 
         <nav aria-label="Principal" className="flex flex-wrap items-center gap-1">
@@ -68,6 +69,7 @@ export default function Navbar() {
               </Link>
             </>
           )}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

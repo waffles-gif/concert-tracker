@@ -5,6 +5,15 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Concert Tracker</title>
+    <script>
+      try {
+        var saved = localStorage.getItem('ct_theme')
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (dark) document.documentElement.classList.add('dark')
+      } catch (error) {
+        /* sin almacenamiento: queda el tema claro */
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
