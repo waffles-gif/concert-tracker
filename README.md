@@ -153,7 +153,7 @@ Las tareas secundarias, como enviar un correo, no hacen esperar al usuario. El s
 
 - Los eventos son `record` inmutables, así que el service no depende de quién los escucha.
 - `@EnableAsync` activa la ejecución asíncrona, y cada listener usa `@EventListener` + `@Async`. El endpoint responde de inmediato aunque el envío tarde o falle.
-- **Limitación:** el correo se simula con un log. Para enviarlo de verdad hay que agregar `spring-boot-starter-mail` y un servidor SMTP.
+- **Correos:** `EmailService` arma el correo con plantillas HTML de Thymeleaf (`templates/email/`) y lo envía con `JavaMailSender` por SMTP. Por defecto apunta al sandbox de **Mailtrap**, así que los correos llegan a ese buzón de prueba y no a casillas reales. Si el envío falla, solo se registra en el log.
 
 ## Modelo de Entidades
 
@@ -204,6 +204,7 @@ Para publicar cambios de la API se redespliega el servicio en Render desde `main
 | `TICKETMASTER_API_KEY` | Clave de la Discovery API de Ticketmaster |
 | `TICKETMASTER_SYNC_ENABLED` | `true` para sincronizar al arrancar y a diario (opcional) |
 | `DEMO_DATA_ENABLED` | `true` para cargar los datos de demostración (opcional) |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` | Credenciales SMTP de Mailtrap para los correos (opcional; `MAIL_HOST`, `MAIL_PORT` y `MAIL_FROM` tienen valores por defecto) |
 | `PORT` | Lo define Render; 8080 por defecto en local |
 
 **Consideraciones:** al dormirse la instancia gratuita, la primera petición tarda; la web y la app móvil usan un timeout largo y avisan al usuario mientras despierta. Un `GET` a la API sin token en `/` responde 401, es lo esperado.
